@@ -41,7 +41,7 @@ public class SubmitLocation : MonoBehaviour {
 			// Access granted and location value could be retrieved
 			Debug.Log("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
 
-			InvokeRepeating("IntervalFunction", 2, 0.3F);
+			InvokeRepeating("IntervalFunction", 0, 1.0F);
 		}
 
 		// Stop service if there is no need to query location updates continuously
@@ -65,7 +65,7 @@ public class SubmitLocation : MonoBehaviour {
 			sendLocation (Input.location.lastData.latitude,
 				Input.location.lastData.longitude,
 				Input.location.lastData.altitude,
-				0);
+				Input.compass.trueHeading);
 
 		} else {
 			sendLocation (0, 0, 0, 0);
@@ -74,7 +74,7 @@ public class SubmitLocation : MonoBehaviour {
 
 	IEnumerable sendLocation(double latitude, double longitude, double altitude, double heading){
 		WWWForm form = new WWWForm ();
-
+		Debug.Log( "Verbose: sendLocation");
 		form.AddField("loclat", latitude.ToString());
 		form.AddField("loclong", longitude.ToString());
 		form.AddField("heading", heading.ToString());

@@ -46,7 +46,7 @@ public class CameraRotateEffect : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate() {
 		for(int i = 0 ; i < numSphere ; i++){
-			audioSources[i].transform.RotateAround(sphere.transform.position, Vector3.up, 20 * Time.deltaTime);
+			audioSources[i].transform.RotateAround(sphere.transform.position, Vector3.up, Input.compass.trueHeading);
 //			spheres[i].transform.position = audioSources[i].transform.position;
 
 		}

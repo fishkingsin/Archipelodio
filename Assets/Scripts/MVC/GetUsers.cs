@@ -6,7 +6,7 @@ public class GetUsers : MonoBehaviour {
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/users";
 	// Use this for initialization
 	IEnumerator Start() {
-		InvokeRepeating("IntervalFunction", 2, 0.3F);
+		InvokeRepeating("IntervalFunction", 0, 2.0F);
 		return fetchUser ();
 
 	}
