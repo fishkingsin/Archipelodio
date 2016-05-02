@@ -7,6 +7,7 @@ public class SubmitLocation : MonoBehaviour {
 	public double latitude;
 	public double longitute;
 	public double altitude;
+	public double heading;
 	IEnumerator Start () {
 		latitude = 0;
 		longitute = 0;
@@ -61,7 +62,9 @@ public class SubmitLocation : MonoBehaviour {
 			latitude = Input.location.lastData.latitude;
 			longitute = Input.location.lastData.longitude;
 			altitude = Input.location.lastData.altitude;
-
+			if (Input.compass.enabled) {
+				heading = Input.compass.trueHeading;
+			}
 			sendLocation (Input.location.lastData.latitude,
 				Input.location.lastData.longitude,
 				Input.location.lastData.altitude,
@@ -95,7 +98,8 @@ public class SubmitLocation : MonoBehaviour {
 
 	public override string ToString(){
 		return "latitude: " + latitude +
-			"| longitude: " + longitute +
-			"| altitude: " + altitude;
+			"\n| longitude: " + longitute +
+			"\n| altitude: " + altitude+
+			"\n| heading: " + heading;
 	}
 }

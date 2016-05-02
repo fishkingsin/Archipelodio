@@ -9,6 +9,7 @@ public class CameraRotateEffect : MonoBehaviour {
 	GameObject audioSource;
 	GameObject audioSource1;
 	GameObject audioSource2;
+
 	GameObject[] audioSources;
 //	GameObject[] spheres;
 
@@ -26,6 +27,7 @@ public class CameraRotateEffect : MonoBehaviour {
 		audioSources[0] = GameObject.Find("Env Audio Source");
 		audioSources[1] = GameObject.Find("Env Audio Source 1");
 		audioSources[2] = GameObject.Find("Env Audio Source 2");
+
 //		spheres = new GameObject[numSphere];
 
 
@@ -48,7 +50,11 @@ public class CameraRotateEffect : MonoBehaviour {
 		for(int i = 0 ; i < numSphere ; i++){
 			audioSources[i].transform.RotateAround(sphere.transform.position, Vector3.up, Input.compass.trueHeading);
 //			spheres[i].transform.position = audioSources[i].transform.position;
-
+			audioSources[i].transform.LookAt (Camera.main.transform);
+			SpriteRenderer renderer = audioSources [i].GetComponents<SpriteRenderer>()[0];
+			renderer.color = new Color(0f, 0.0f, 1.0f, 1f); 
 		}
+		sphere.transform.LookAt (Camera.main.transform);
+
 	}
 }

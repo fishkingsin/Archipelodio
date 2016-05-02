@@ -18,7 +18,7 @@ public class Main : MonoBehaviour {
 	void Update () {
 		LineRenderer lineRenderer = GetComponent<LineRenderer>();
 		Vector3[] points = new Vector3[lengthOfLineRenderer];
-			float t = Time.time;
+//			float t = Time.time;
 		int i = 0;
 		while (i < lengthOfLineRenderer) {
 			points[i] = new Vector3(i * 0.5F, 0, 0);

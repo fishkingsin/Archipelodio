@@ -5,9 +5,9 @@ using System;
 public class GetUsers : MonoBehaviour {
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/users";
 	// Use this for initialization
-	IEnumerator Start() {
+	void Start() {
 		InvokeRepeating("IntervalFunction", 0, 2.0F);
-		return fetchUser ();
+		fetchUser ();
 
 	}
 	IEnumerator fetchUser(){
@@ -22,9 +22,9 @@ public class GetUsers : MonoBehaviour {
 			Debug.Log("ERROR: " + www.error);
 		}
 	}
-	IEnumerator IntervalFunction(){
-		InvokeRepeating("IntervalFunction", 2, 0.3F);
-		return fetchUser();
+	void IntervalFunction(){
+		Debug.Log("Verbose: IntervalFunction");
+		fetchUser();
 	}
 	private void Processjson(string jsonString)
 	{
