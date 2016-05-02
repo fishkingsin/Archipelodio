@@ -25,7 +25,7 @@ public class SubmitLocation : MonoBehaviour {
 			yield return new WaitForSeconds(1);
 			maxWait--;
 		}
-
+		Input.compass.enabled = true;
 		// Service didn't initialize in 20 seconds
 		if (maxWait < 1)
 		{

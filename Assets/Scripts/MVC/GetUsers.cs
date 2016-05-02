@@ -11,10 +11,12 @@ public class GetUsers : MonoBehaviour {
 
 	}
 	IEnumerator fetchUser(){
+		Debug.Log("Verbose: fetchUser");
 		WWW www = new WWW(url);
 		yield return www;
 		if (www.error == null)
 		{
+			
 			Processjson(www.text);
 		}
 		else
@@ -23,12 +25,12 @@ public class GetUsers : MonoBehaviour {
 		}
 	}
 	void IntervalFunction(){
-		Debug.Log("Verbose: IntervalFunction");
+		
 		fetchUser();
 	}
 	private void Processjson(string jsonString)
 	{
-//		Debug.Log ("Processjson: " + jsonString);
+		Debug.Log ("Processjson: " + jsonString);
 		JSONObject jsonvale = new JSONObject(jsonString);
 
 		accessData(jsonvale);
