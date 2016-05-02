@@ -2,9 +2,9 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class CloseButton : MonoBehaviour {
+public class AboutButton : MonoBehaviour {
 
 	public void onClick () {
-		SceneManager.LoadScene ("Scenes/Main");
+		SceneManager.LoadScene ("About");
 	}
 }
