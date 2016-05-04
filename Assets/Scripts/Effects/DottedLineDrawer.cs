@@ -47,9 +47,9 @@ public class DottedLineDrawer : MonoBehaviour {
 		for (int i = 0; i < numObjects; i++) {
 			GameObject e = Instantiate (dot);
 
-			float x = Mathf.Sin(((i*1.0f)/numObjects)*Mathf.PI)*50;
-			float y = 0 ;
-			float z = Mathf.Cos(((i*1.0f)/numObjects)*Mathf.PI)*50;
+			float y = Mathf.Sin(((i*1.0f)/numObjects)*Mathf.PI*2)*5;
+			float x = 0 ;
+			float z = Mathf.Cos(((i*1.0f)/numObjects)*Mathf.PI*2)*5;
 
 			e.transform.position = new Vector3 (x, y, z);
 			e.transform.localScale = new Vector3 (_scale, _scale, _scale);

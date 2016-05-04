@@ -26,7 +26,7 @@ public class GetUsers : MonoBehaviour {
 	}
 	void IntervalFunction(){
 		
-		fetchUser();
+		StartCoroutine ("fetchUser");
 	}
 	private void Processjson(string jsonString)
 	{

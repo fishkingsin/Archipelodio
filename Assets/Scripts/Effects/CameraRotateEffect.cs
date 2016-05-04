@@ -5,46 +5,16 @@ using System.Collections.Generic;
 using AssemblyCSharp;
 
 
-public class CircularBuffer<T>
-{
-	Queue<T> _queue;
-	int _size;
-
-	public CircularBuffer(int size)
-	{
-		_queue = new Queue<T>(size);
-		_size = size;
-	}
-
-	public void Add(T obj)
-	{
-		if (_queue.Count == _size)
-		{
-			_queue.Dequeue();
-			_queue.Enqueue(obj);
-		}
-		else
-			_queue.Enqueue(obj);
-	}
-	public T Read()
-	{
-		return _queue.Dequeue();
-	}
-
-	public T Peek()
-	{
-		return _queue.Peek();
-	}
-}
-
 
 public class CameraRotateEffect : MonoBehaviour {
 	
-	Time time;
-	float lastAngle;
-
 	public GameObject[] audioSources;
 
+	private float _smoothTime = 0.3F;
+	private float yVelocity = 0.0F;
+	private Time time;
+	private float lastAngle;
+	private float heading = 0;
 	// Use this for initialization
 	void Start () {
 		lastAngle = 0;
@@ -60,7 +30,7 @@ public class CameraRotateEffect : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		float diff = -Input.compass.trueHeading - lastAngle;
+		float diff = 0;//heading - lastAngle;
 		Camera.main.transform.RotateAround(transform.position, Vector3.up, diff);
 		for(int i = 0 ; i < audioSources.Length ; i++){
 			audioSources[i].transform.LookAt (Camera.main.transform);
@@ -73,9 +43,8 @@ public class CameraRotateEffect : MonoBehaviour {
 					1.0f,
 					1f)); 
 		}
-		transform.LookAt (Camera.main.transform);
 
-		lastAngle = Mathf.Lerp(lastAngle, -Input.compass.trueHeading , 20*Time.time);
+//		heading = Mathf.SmoothDamp(heading, -Input.compass.trueHeading, ref yVelocity, _smoothTime);
 
 	}
 }

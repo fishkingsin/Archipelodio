@@ -26,6 +26,7 @@ public class SubmitLocation : MonoBehaviour {
 			maxWait--;
 		}
 		Input.compass.enabled = true;
+		Input.gyro.enabled = true;
 		// Service didn't initialize in 20 seconds
 		if (maxWait < 1)
 		{
@@ -65,23 +66,21 @@ public class SubmitLocation : MonoBehaviour {
 			if (Input.compass.enabled) {
 				heading = Input.compass.trueHeading;
 			}
-			sendLocation (Input.location.lastData.latitude,
-				Input.location.lastData.longitude,
-				Input.location.lastData.altitude,
-				Input.compass.trueHeading);
+			StartCoroutine (
+				"sendLocation");
 
 		} else {
-			sendLocation (0, 0, 0, 0);
+			StartCoroutine ("sendLocation");
 		}		
 	}
 
-	IEnumerable sendLocation(double latitude, double longitude, double altitude, double heading){
+	IEnumerable sendLocation(){
 		WWWForm form = new WWWForm ();
 		Debug.Log( "Verbose: sendLocation");
-		form.AddField("loclat", latitude.ToString());
-		form.AddField("loclong", longitude.ToString());
-		form.AddField("heading", heading.ToString());
-		form.AddField("altitude", altitude.ToString());
+		form.AddField("loclat", Input.location.lastData.latitude.ToString());
+		form.AddField("loclong", Input.location.lastData.longitude.ToString());
+		form.AddField("heading", Input.compass.trueHeading.ToString());
+		form.AddField("altitude", Input.location.lastData.altitude.ToString());
 		form.AddField("uid", SystemInfo.deviceUniqueIdentifier);
 		WWW www = new WWW(url, form);
 
