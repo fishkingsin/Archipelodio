@@ -5,12 +5,12 @@ public class SubmitLocation : MonoBehaviour {
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/update";
 	// Use this for initialization
 	public double latitude;
-	public double longitute;
+	public double longitude;
 	public double altitude;
 	public double heading;
 	IEnumerator Start () {
 		latitude = 0;
-		longitute = 0;
+		longitude = 0;
 		altitude = 0;
 		if (!Input.location.isEnabledByUser)
 			yield break;
@@ -42,9 +42,9 @@ public class SubmitLocation : MonoBehaviour {
 			// Access granted and location value could be retrieved
 			Debug.Log("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
 
-			InvokeRepeating("IntervalFunction", 0, 1.0F);
-		}
 
+		}
+		InvokeRepeating("IntervalFunction", 0, 1.0F);
 		// Stop service if there is no need to query location updates continuously
 
 
@@ -60,7 +60,7 @@ public class SubmitLocation : MonoBehaviour {
 			// Access granted and location value could be retrieved
 			Debug.Log ("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
 			latitude = Input.location.lastData.latitude;
-			longitute = Input.location.lastData.longitude;
+			longitude = Input.location.lastData.longitude;
 			altitude = Input.location.lastData.altitude;
 			if (Input.compass.enabled) {
 				heading = Input.compass.trueHeading;
@@ -97,9 +97,13 @@ public class SubmitLocation : MonoBehaviour {
 	}
 
 	public override string ToString(){
-		return "latitude: " + latitude +
-			"\n| longitude: " + longitute +
-			"\n| altitude: " + altitude+
-			"\n| heading: " + heading;
+		if (Input.location.status != LocationServiceStatus.Running) {
+			return "Faile to read Location";
+		}
+		return "latitude: " + Input.location.lastData.latitude +
+			"\n| longitude: " + Input.location.lastData.longitude +
+			"\n| altitude: " + Input.location.lastData.altitude+
+			"\n| trueHeading: " + Input.compass.trueHeading +
+			"\n| magneticHeading: " +Input.compass.magneticHeading ;
 	}
 }
