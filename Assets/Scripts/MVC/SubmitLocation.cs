@@ -1,14 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
-public class SubmitLocation : MonoBehaviour {
+public class SubmitLocation : MonoBehaviour
+{
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/update";
 	// Use this for initialization
 	public double latitude;
 	public double longitude;
 	public double altitude;
 	public double heading;
-	IEnumerator Start () {
+
+	IEnumerator Start ()
+	{
 		latitude = 0;
 		longitude = 0;
 		altitude = 0;
@@ -16,47 +20,44 @@ public class SubmitLocation : MonoBehaviour {
 			yield break;
 
 		// Start service before querying location
-		Input.location.Start();
+		Input.location.Start ();
 
 		// Wait until service initializes
 		int maxWait = 20;
-		while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
-		{
-			yield return new WaitForSeconds(1);
+		while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0) {
+			yield return new WaitForSeconds (1);
 			maxWait--;
 		}
 		Input.compass.enabled = true;
 		Input.gyro.enabled = true;
 		// Service didn't initialize in 20 seconds
-		if (maxWait < 1)
-		{
-			Debug.Log("Timed out");
+		if (maxWait < 1) {
+			Debug.Log ("Timed out");
 			yield break;
 		}
-		if (Input.location.status == LocationServiceStatus.Failed)
-		{
-			Debug.Log("Unable to determine device location");
+		if (Input.location.status == LocationServiceStatus.Failed) {
+			Debug.Log ("Unable to determine device location");
 			yield break;
-		}
-		else
-		{
+		} else {
 			// Access granted and location value could be retrieved
-			Debug.Log("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
+			Debug.Log ("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
 
 
 		}
-		InvokeRepeating("IntervalFunction", 0, 1.0F);
+		InvokeRepeating ("IntervalFunction", 0, 1.0F);
 		// Stop service if there is no need to query location updates continuously
 
 
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
 	
 	}
 
-	void IntervalFunction(){
+	void IntervalFunction ()
+	{
 		if (Input.location.status == LocationServiceStatus.Running) {
 			// Access granted and location value could be retrieved
 			Debug.Log ("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
@@ -74,35 +75,41 @@ public class SubmitLocation : MonoBehaviour {
 		}		
 	}
 
-	IEnumerable sendLocation(){
-		WWWForm form = new WWWForm ();
-		Debug.Log( "Verbose: sendLocation");
-		form.AddField("loclat", Input.location.lastData.latitude.ToString());
-		form.AddField("loclong", Input.location.lastData.longitude.ToString());
-		form.AddField("heading", Input.compass.trueHeading.ToString());
-		form.AddField("altitude", Input.location.lastData.altitude.ToString());
-		form.AddField("uid", SystemInfo.deviceUniqueIdentifier);
-		WWW www = new WWW(url, form);
+	IEnumerable sendLocation ()
+	{
+		try {
+			WWWForm form = new WWWForm ();
+			Debug.Log ("Verbose: sendLocation");
+			form.AddField ("loclat", Input.location.lastData.latitude.ToString ());
+			form.AddField ("loclong", Input.location.lastData.longitude.ToString ());
+			form.AddField ("heading", Input.compass.trueHeading.ToString ());
+			form.AddField ("altitude", Input.location.lastData.altitude.ToString ());
+			form.AddField ("uid", SystemInfo.deviceUniqueIdentifier);
+			WWW www = new WWW (url, form);
 
-		// this is what you need to add
-		yield return www;
+			// this is what you need to add
+			yield return www;
 
 
-		if (www.error!=null) {
-			Debug.Log( "Error uploading: " + www.error );
-		}else {
-			Debug.Log("Finished uploading data");  
+			if (www.error != null) {
+				Debug.Log ("Error uploading: " + www.error);
+			} else {
+				Debug.Log ("Finished uploading data");  
+			}
+		} catch (Exception e) {
+			Debug.Log ("Error :" + e);  
 		}
 	}
 
-	public override string ToString(){
+	public override string ToString ()
+	{
 		if (Input.location.status != LocationServiceStatus.Running) {
 			return "Faile to read Location";
 		}
 		return "latitude: " + Input.location.lastData.latitude +
-			"\n| longitude: " + Input.location.lastData.longitude +
-			"\n| altitude: " + Input.location.lastData.altitude+
-			"\n| trueHeading: " + Input.compass.trueHeading +
-			"\n| magneticHeading: " +Input.compass.magneticHeading ;
+		"\n| longitude: " + Input.location.lastData.longitude +
+		"\n| altitude: " + Input.location.lastData.altitude +
+		"\n| trueHeading: " + Input.compass.trueHeading +
+		"\n| magneticHeading: " + Input.compass.magneticHeading;
 	}
 }
