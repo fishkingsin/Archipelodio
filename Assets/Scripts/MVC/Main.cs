@@ -11,13 +11,15 @@ public class Main : MonoBehaviour {
 	public GameObject[] enemis;
 	private bool isShowing;
 	public int numObjects=100;
-
+	float range = 5.0f;
+	float range_h;
 	void Start() {
-		InvokeRepeating("IntervalFunction", 0, 2.0F);
+		range_h = range*0.5f;
+		InvokeRepeating("IntervalFunction", 1.0f, 2.0F);
 		enemis = new GameObject[numObjects];
 		for (int i = 0; i < numObjects; i++) {
 			GameObject e = Instantiate (enemy);
-			e.transform.position = new Vector3 (UnityEngine.Random.value*10-5, UnityEngine.Random.value*5, UnityEngine.Random.value*10-5);
+			e.transform.position = new Vector3 (UnityEngine.Random.value*range-range_h, UnityEngine.Random.value*range_h, UnityEngine.Random.value*range-range_h);
 			e.transform.localScale = new Vector3 (-0.5f, -0.5f, -0.5f);
 			enemis[i]=e;
 		}

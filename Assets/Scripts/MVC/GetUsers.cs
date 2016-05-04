@@ -8,17 +8,18 @@ public class GetUsers : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		InvokeRepeating ("IntervalFunction", 0, 2.0F);
+		InvokeRepeating ("IntervalFunction", 1.0f, 2.0F);
 		fetchUser ();
 
 	}
 
 	IEnumerator fetchUser ()
 	{
+
+		Debug.Log ("Verbose: fetchUser");
+		WWW www = new WWW (url);
+		yield return www;
 		try {
-			Debug.Log ("Verbose: fetchUser");
-			WWW www = new WWW (url);
-			yield return www;
 			if (www.error == null) {
 			
 				Processjson (www.text);

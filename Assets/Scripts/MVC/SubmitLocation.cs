@@ -13,6 +13,7 @@ public class SubmitLocation : MonoBehaviour
 
 	IEnumerator Start ()
 	{
+		InvokeRepeating ("IntervalFunction", 1.0f, 1.0F);
 		latitude = 0;
 		longitude = 0;
 		altitude = 0;
@@ -44,7 +45,7 @@ public class SubmitLocation : MonoBehaviour
 
 
 		}
-		InvokeRepeating ("IntervalFunction", 0, 1.0F);
+
 		// Stop service if there is no need to query location updates continuously
 
 
@@ -58,6 +59,7 @@ public class SubmitLocation : MonoBehaviour
 
 	void IntervalFunction ()
 	{
+		Debug.Log ("Verbose: sendLocation");
 		if (Input.location.status == LocationServiceStatus.Running) {
 			// Access granted and location value could be retrieved
 			Debug.Log ("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
@@ -67,38 +69,40 @@ public class SubmitLocation : MonoBehaviour
 			if (Input.compass.enabled) {
 				heading = Input.compass.trueHeading;
 			}
-			StartCoroutine (
-				"sendLocation");
+
+			sendLocation();
 
 		} else {
-			StartCoroutine ("sendLocation");
+			sendLocation();
 		}		
 	}
 
 	IEnumerable sendLocation ()
 	{
+		Debug.Log ("Verbose: sendLocation");
+		WWWForm form = new WWWForm ();
 		try {
-			WWWForm form = new WWWForm ();
 			Debug.Log ("Verbose: sendLocation");
 			form.AddField ("loclat", Input.location.lastData.latitude.ToString ());
 			form.AddField ("loclong", Input.location.lastData.longitude.ToString ());
 			form.AddField ("heading", Input.compass.trueHeading.ToString ());
 			form.AddField ("altitude", Input.location.lastData.altitude.ToString ());
 			form.AddField ("uid", SystemInfo.deviceUniqueIdentifier);
-			WWW www = new WWW (url, form);
-
-			// this is what you need to add
-			yield return www;
-
-
-			if (www.error != null) {
-				Debug.Log ("Error uploading: " + www.error);
-			} else {
-				Debug.Log ("Finished uploading data");  
-			}
 		} catch (Exception e) {
 			Debug.Log ("Error :" + e);  
 		}
+		WWW www = new WWW (url, form);
+
+		// this is what you need to add
+		yield return www;
+
+
+		if (www.error != null) {
+			Debug.Log ("Error uploading: " + www.error);
+		} else {
+			Debug.Log ("Finished uploading data");  
+		}
+		
 	}
 
 	public override string ToString ()

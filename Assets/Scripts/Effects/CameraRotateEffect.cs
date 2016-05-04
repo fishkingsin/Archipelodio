@@ -7,11 +7,11 @@ using AssemblyCSharp;
 
 
 public class CameraRotateEffect : MonoBehaviour {
-	
+	public GameObject sphere;
 	public GameObject[] audioSources;
 
-	private float _smoothTime = 0.3F;
-	private float yVelocity = 0.0F;
+//	private float _smoothTime = 0.3F;
+//	private float yVelocity = 0.0F;
 	private Time time;
 	private float lastAngle;
 	private float heading = 0;
@@ -25,12 +25,12 @@ public class CameraRotateEffect : MonoBehaviour {
 			renderer.color = new Color(0f, 0.0f, 1.0f, 1f); 
 		}
 	
-
+//		Camera.main.transform.LookAt (transform);
 	}
 	
 	// Update is called once per frame
 	void Update() {
-		float diff = 0;//heading - lastAngle;
+		float diff = heading - lastAngle;
 		Camera.main.transform.RotateAround(transform.position, Vector3.up, diff);
 		for(int i = 0 ; i < audioSources.Length ; i++){
 			audioSources[i].transform.LookAt (Camera.main.transform);
@@ -43,8 +43,8 @@ public class CameraRotateEffect : MonoBehaviour {
 					1.0f,
 					1f)); 
 		}
-
-//		heading = Mathf.SmoothDamp(heading, -Input.compass.trueHeading, ref yVelocity, _smoothTime);
-
+		lastAngle = Mathf.Lerp (lastAngle, heading, Time.deltaTime); 
+		heading = Mathf.Lerp(heading, -Input.compass.trueHeading, Time.deltaTime*0.5f);
+		Camera.main.transform.LookAt (sphere.transform);
 	}
 }
