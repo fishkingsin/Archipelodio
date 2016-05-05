@@ -8,20 +8,17 @@ using AssemblyCSharp;
 
 public class CameraRotateEffect : MonoBehaviour
 {
-	public GameObject sphere;
+
 	public GameObject[] audioSources;
 
 	private float _smoothTime = 0.1F;
 	private float yVelocity = 0.1F;
-	private Time time;
-	private float lastAngle;
+
 	private float heading = 0;
 	// Use this for initialization
 	private float target; 
 	void Start ()
 	{
-		lastAngle = 0;
-		
 		for (int i = 0; i < audioSources.Length; i++) {
 			audioSources [i].transform.LookAt (Camera.main.transform);
 			SpriteRenderer renderer = audioSources [i].GetComponents<SpriteRenderer> () [0];
@@ -34,8 +31,9 @@ public class CameraRotateEffect : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		float diff = heading - lastAngle;
-		Camera.main.transform.RotateAround (transform.position, Vector3.up, diff);
+
+		transform.localRotation = Quaternion.Euler(0, 360.0f-heading, 0);
+
 		for (int i = 0; i < audioSources.Length; i++) {
 			audioSources [i].transform.LookAt (Camera.main.transform);
 			float dist = Math.Abs (Vector3.Distance (audioSources [i].transform.position, transform.position));
@@ -47,19 +45,15 @@ public class CameraRotateEffect : MonoBehaviour
 					1.0f,
 					1f)); 
 		}
-		if (diff > 0.1) {
-			lastAngle = (heading - lastAngle) * 0.001f;
-		}
 		if (Input.compass.enabled) {
 			target = -Input.compass.trueHeading;
-			heading = Mathf.Lerp (heading, target, Time.deltaTime * 20.0f);
+			heading = Mathf.Lerp (heading, target, 0.005f);
 		} else {
-			target = -360 + Time.deltaTime;
-			heading = Mathf.SmoothDamp (heading, target, ref yVelocity, _smoothTime);
+			target = -360 + Time.deltaTime * 0.1f;
+			heading = Mathf.Lerp (heading, target, 0.005f);
 
 
 		}
 
-		Camera.main.transform.LookAt (sphere.transform);
 	}
 }
