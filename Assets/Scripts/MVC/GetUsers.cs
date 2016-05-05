@@ -4,8 +4,11 @@ using System;
 
 public class GetUsers : MonoBehaviour
 {
+	public GameObject user;
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/users";
 	// Use this for initialization
+	public delegate void FetchedUserDelegate(string a, float b, float c, float d);
+	public FetchedUserDelegate fetchedUserDelegate;
 	void Start ()
 	{
 		InvokeRepeating ("IntervalFunction", 1.0f, 2.0F);
@@ -59,6 +62,7 @@ public class GetUsers : MonoBehaviour
 			"| timestamp: " + obj ["timestamp"].str +
 			"| tester: " + obj ["tester"].b);
 
+			fetchedUserDelegate (obj ["uid"].str, obj ["loclong"].n,obj ["loclat"].n,obj ["altitude"].n);
 			break;
 		case JSONObject.Type.ARRAY:
 			foreach (JSONObject j in obj.list) {
