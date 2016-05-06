@@ -70,10 +70,10 @@ public class SubmitLocation : MonoBehaviour
 				heading = Input.compass.trueHeading;
 			}
 
-			sendLocation();
+			StartCoroutine ("sendLocation");
 
 		} else {
-			sendLocation();
+			StartCoroutine ("sendLocation");
 		}		
 	}
 

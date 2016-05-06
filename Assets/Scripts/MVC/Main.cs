@@ -90,7 +90,7 @@ public class Main : MonoBehaviour {
 			float x = (float)Utils.Mapf(longitude, LEFT, RIGHT, -max, max,false);
 			float y = (float)Utils.Mapf (latitude, TOP, BOTTOM, -max, max,true);
 			float z = (float)Utils.Mapf (altutide, TOP, BOTTOM, 0.0f, max,true);
-			Debug.Log ("uid :"+uid +"| x: " + x + "| y: " + y + "| z: " + z);
+//			Debug.Log ("uid :"+uid +"| x: " + x + "| y: " + y + "| z: " + z);
 			e.transform.position = new Vector3 (x,y,z);
 //			e.transform.position = new Vector3 (
 //				UnityEngine.Random.value * range - range_h,

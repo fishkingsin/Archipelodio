@@ -42,7 +42,7 @@ public class GetUsers : MonoBehaviour
 
 	private void Processjson (string jsonString)
 	{
-		Debug.Log ("Processjson: " + jsonString);
+//		Debug.Log ("Processjson: " + jsonString);
 		JSONObject jsonvale = new JSONObject (jsonString);
 
 		accessData (jsonvale);
@@ -53,16 +53,16 @@ public class GetUsers : MonoBehaviour
 	{
 		switch (obj.type) {
 		case JSONObject.Type.OBJECT:
-			Debug.Log ("lid:" + obj ["lid"].str +
-			"| uid: " + obj ["uid"].str +
-			"| loclat: " + obj ["loclat"].n +
-			"| loclong: " + obj ["loclong"].n +
-			"| heading: " + obj ["heading"].n +
-			"| altitude: " + obj ["altitude"].n +
-			"| timestamp: " + obj ["timestamp"].str +
-			"| tester: " + obj ["tester"].b);
+//			Debug.Log ("lid:" + obj ["lid"].str +
+//			"| uid: " + obj ["uid"].str +
+//			"| loclat: " + obj ["loclat"].n +
+//			"| loclong: " + obj ["loclong"].n +
+//			"| heading: " + obj ["heading"].n +
+//			"| altitude: " + obj ["altitude"].n +
+//			"| timestamp: " + obj ["timestamp"].str +
+//			"| tester: " + obj ["tester"].b);
 
-			fetchedUserDelegate (obj ["uid"].str, obj ["loclong"].n,obj ["loclat"].n,obj ["altitude"].n);
+			fetchedUserDelegate (obj ["uid"].str, (float)obj ["loclong"].n ,obj ["loclat"].n,obj ["altitude"].n);
 			break;
 		case JSONObject.Type.ARRAY:
 			foreach (JSONObject j in obj.list) {
