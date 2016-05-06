@@ -31,6 +31,7 @@ public class SubmitLocation : MonoBehaviour
 		}
 		Input.compass.enabled = true;
 		Input.gyro.enabled = true;
+
 		// Service didn't initialize in 20 seconds
 		if (maxWait < 1) {
 			Debug.Log ("Timed out");

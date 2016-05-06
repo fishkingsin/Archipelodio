@@ -33,7 +33,7 @@ namespace AssemblyCSharp
 
 		}
 
-		public static T[] GetAtPath<T> (string path) {
+		public static T[] GetAtPath<T> (string path ) {
 
 			ArrayList al = new ArrayList();
 			string [] fileEntries = Directory.GetFiles(Application.dataPath+"/"+path);
@@ -45,7 +45,7 @@ namespace AssemblyCSharp
 				if (index > 0)
 					localPath += fileName.Substring(index);
 
-				System.Object t = UnityEditor.AssetDatabase.LoadAssetAtPath(localPath, typeof(T));
+				UnityEngine.Object t = Resources.Load(localPath, typeof(T));
 
 				if(t != null)
 					al.Add(t);

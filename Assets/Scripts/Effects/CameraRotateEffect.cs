@@ -45,7 +45,7 @@ public class CameraRotateEffect : MonoBehaviour
 //					1f)); 
 //		}
 		if (Input.compass.enabled) {
-			target = -Input.compass.trueHeading;
+			target = Input.gyro.attitude.y;
 			heading = Mathf.Lerp (heading, target, 0.005f);
 		} else {
 			target = -360 + Time.deltaTime * 0.1f;
