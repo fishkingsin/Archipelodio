@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class SubmitLocation : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class SubmitLocation : MonoBehaviour
 
 	IEnumerator Start ()
 	{
-		InvokeRepeating ("IntervalFunction", 1.0f, 1.0F);
+//		InvokeRepeating ("IntervalFunction", 0.0f, 10.0F);
 		latitude = 0;
 		longitude = 0;
 		altitude = 0;
@@ -48,7 +49,7 @@ public class SubmitLocation : MonoBehaviour
 		}
 
 		// Stop service if there is no need to query location updates continuously
-
+		StartCoroutine (sendLocation ());
 
 	}
 	
@@ -58,37 +59,43 @@ public class SubmitLocation : MonoBehaviour
 	
 	}
 
-	void IntervalFunction ()
+//	void IntervalFunction ()
+//	{
+//		
+//		if (Input.location.status == LocationServiceStatus.Running) {
+//			// Access granted and location value could be retrieved
+//			Debug.Log ("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
+//			latitude = Input.location.lastData.latitude;
+//			longitude = Input.location.lastData.longitude;
+//			altitude = Input.location.lastData.altitude;
+//			if (Input.compass.enabled) {
+//				heading = Input.compass.trueHeading;
+//			}
+//
+//
+//		}
+//		sendLocation ();
+////		InvokeRepeating ("IntervalFunction", 10.0f, 1.0F);
+//	}
+
+	IEnumerator sendLocation ()
 	{
-		Debug.Log ("Verbose: sendLocation");
-		if (Input.location.status == LocationServiceStatus.Running) {
-			// Access granted and location value could be retrieved
-			Debug.Log ("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
-			latitude = Input.location.lastData.latitude;
-			longitude = Input.location.lastData.longitude;
-			altitude = Input.location.lastData.altitude;
-			if (Input.compass.enabled) {
-				heading = Input.compass.trueHeading;
-			}
-
-			StartCoroutine ("sendLocation");
-
-		} else {
-			StartCoroutine ("sendLocation");
-		}		
-	}
-
-	IEnumerable sendLocation ()
-	{
-		Debug.Log ("Verbose: sendLocation");
+		
+		yield return new WaitForSeconds (3.0f);
 		WWWForm form = new WWWForm ();
 		try {
-			Debug.Log ("Verbose: sendLocation");
-			form.AddField ("loclat", Input.location.lastData.latitude.ToString ());
-			form.AddField ("loclong", Input.location.lastData.longitude.ToString ());
-			form.AddField ("heading", Input.compass.trueHeading.ToString ());
-			form.AddField ("altitude", Input.location.lastData.altitude.ToString ());
+			if (Input.location.status != LocationServiceStatus.Failed) {
+				form.AddField ("loclat", Input.location.lastData.latitude.ToString ());
+				form.AddField ("loclong", Input.location.lastData.longitude.ToString ());
+				form.AddField ("heading", Input.compass.trueHeading.ToString ());
+				form.AddField ("altitude", Input.location.lastData.altitude.ToString ());
+				Debug.Log ("Verbose: form :" + form.ToString ());
+				#if UNITY_EDITOR
+				form.AddField ("uid", "James");
+				#else
 			form.AddField ("uid", SystemInfo.deviceUniqueIdentifier);
+				#endif
+			}
 		} catch (Exception e) {
 			Debug.Log ("Error :" + e);  
 		}

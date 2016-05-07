@@ -6,12 +6,17 @@ using AssemblyCSharp;
 public class User : MonoBehaviour {
 	public delegate void UserDeadDelegate(GameObject obj);
 	public UserDeadDelegate userDeadDelegate;
+
+	public delegate AudioClip GetAudioClipDelegate();
+	public GetAudioClipDelegate getClipDelegate;
+
 	public float maxAge;
 	public float age;
 	public string uid;
 	public GameObject parentRef;
 	public GameObject centerRef;
 	const string glyphs= "abcdefghijklmnopqrstuvwxyz0123456789"; //add the characters you want
+	AudioSource audioSource;
 	// Use this for initialization
 	void Start () {
 		
@@ -21,11 +26,27 @@ public class User : MonoBehaviour {
 			uid += glyphs[UnityEngine.Random.Range(0, glyphs.Length)];
 		}
 		age = UnityEngine.Random.value * maxAge + maxAge * 0.5f;
+		audioSource = GetComponent <AudioSource> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if(audioSource!=null){
+			if (audioSource.isPlaying) {
+			} else {
+				if (getClipDelegate != null) {
+					AudioClip audioClip = getClipDelegate ();
+					if (audioClip != null) {
+						audioSource.clip = audioClip;
+						audioSource.volume = 0;
+						audioSource.Play ();
+						StartCoroutine (AudioFadeOut.FadeIn (audioSource, 0.5f));
+					}
+				}
+			}
+				
 
+		}
 		age = age *0.99f;
 		if (age < 0) {
 			Debug.Log (uid +" : dead");

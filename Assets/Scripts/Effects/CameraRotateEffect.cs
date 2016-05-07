@@ -10,13 +10,12 @@ using System.Runtime.InteropServices;
 
 public class CameraRotateEffect : MonoBehaviour
 {
-
-//	public GameObject[] audioSources;
+	private CircularBuffer<float> circularBuffer;
 	private float heading = 0;
 	private float target; 
 	void Start ()
 	{
-		
+		circularBuffer = new CircularBuffer<float> (20);
 
 			
 //		for (int i = 0; i < audioSources.Length; i++) {
@@ -32,7 +31,7 @@ public class CameraRotateEffect : MonoBehaviour
 	void Update ()
 	{
 
-		transform.localRotation = Quaternion.Euler(0, 360.0f-heading, 0);
+		transform.localRotation = Quaternion.Euler(0, -heading, 0);
 //		for (int i = 0; i < audioSources.Length; i++) {
 //			audioSources [i].transform.LookAt (Camera.main.transform);
 //			float dist = Math.Abs (Vector3.Distance (audioSources [i].transform.position, transform.position));
@@ -45,14 +44,36 @@ public class CameraRotateEffect : MonoBehaviour
 //					1f)); 
 //		}
 		if (Input.compass.enabled) {
-			target = Input.gyro.attitude.y;
-			heading = Mathf.Lerp (heading, target, 0.005f);
+			circularBuffer.Add (Input.compass.trueHeading);
+
+			target = Average(circularBuffer.ToArray ());
+
+			heading = Mathf.Lerp (heading, target ,0.9f);
 		} else {
-			target = -360 + Time.deltaTime * 0.1f;
+			circularBuffer.Add (Time.deltaTime * 0.1f);
+			target = Average(circularBuffer.ToArray ());
 			heading = Mathf.Lerp (heading, target, 0.005f);
 
 
 		}
 
+	}
+
+	public float Sum(params float[] customerssalary)
+	{
+		float result = 0;
+
+		for(int i = 0; i < customerssalary.Length; i++)
+		{
+			result += customerssalary[i];
+		}
+
+		return result;
+	}
+	public float Average(params float[] customerssalary)
+	{
+		float sum = Sum(customerssalary);
+		float result = (float)sum / customerssalary.Length;
+		return result;
 	}
 }

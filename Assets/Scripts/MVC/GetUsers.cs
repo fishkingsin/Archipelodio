@@ -11,14 +11,14 @@ public class GetUsers : MonoBehaviour
 	public FetchedUserDelegate fetchedUserDelegate;
 	void Start ()
 	{
-		InvokeRepeating ("IntervalFunction", 1.0f, 2.0F);
-		fetchUser ();
+//		InvokeRepeating ("IntervalFunction", 0.0f, 10.0F);
+		StartCoroutine ( fetchUser ());
 
 	}
 
 	IEnumerator fetchUser ()
 	{
-
+		yield return new WaitForSeconds (2.0f);
 		Debug.Log ("Verbose: fetchUser");
 		WWW www = new WWW (url);
 		yield return www;
@@ -34,11 +34,12 @@ public class GetUsers : MonoBehaviour
 		}
 	}
 
-	void IntervalFunction ()
-	{
-		
-		StartCoroutine ("fetchUser");
-	}
+//	void IntervalFunction ()
+//	{
+////		InvokeRepeating ("IntervalFunction", 10.0f, 1.0F);
+////		StartCoroutine ("fetchUser");
+//		fetchUser ();
+//	}
 
 	private void Processjson (string jsonString)
 	{
