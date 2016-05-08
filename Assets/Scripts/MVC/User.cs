@@ -33,7 +33,7 @@ public class User : MonoBehaviour
 	void Start ()
 	{
 		mScale = transform.localScale;
-//		age = 100;//UnityEngine.Random.value * maxAge + maxAge * 0.5f;
+		age = maxAge;//UnityEngine.Random.value * maxAge + maxAge * 0.5f;
 		audioSource = GetComponent <AudioSource> ();
 		audioSource.loop = false;
 	}
@@ -54,11 +54,14 @@ public class User : MonoBehaviour
 			}
 		} else {
 			age -= 1;
-			float s = Mathf.Min (age,10.0f) / 10.0f;
+			float s = Mathf.Min (age,100.0f) / 100.0f;
+
 			transform.localScale = mScale * s;
+
 			if (audioSource != null) {
 
 				if (!audioSource.isPlaying && audioSource.clip != null) {
+					audioSource.volume = s;
 					if (getClipDelegate != null) {
 //						Debug.Log ("User : " + uid + " player stop load new ");
 						if (audioSourceCompleted != null) {
