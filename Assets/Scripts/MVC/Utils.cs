@@ -14,9 +14,9 @@ namespace AssemblyCSharp
 		}
 		static public double Mapf(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
 
-			if (Math.Abs(inputMin - inputMax) < 1.19209290E-07F){
-				return outputMin;
-			} else {
+//			if (Math.Abs(inputMin - inputMax) < 1.19209290E-07F){
+//				return outputMin;
+//			} else {
 				float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
 
 				if( clamp ){
@@ -29,7 +29,7 @@ namespace AssemblyCSharp
 					}
 				}
 				return outVal;
-			}
+//			}
 
 		}
 

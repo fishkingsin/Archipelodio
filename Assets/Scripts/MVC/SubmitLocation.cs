@@ -91,7 +91,7 @@ public class SubmitLocation : MonoBehaviour
 				form.AddField ("altitude", Input.location.lastData.altitude.ToString ());
 				Debug.Log ("Verbose: form :" + form.ToString ());
 				#if UNITY_EDITOR
-				form.AddField ("uid", "James");
+				form.AddField ("uid", "debugger");
 				#else
 			form.AddField ("uid", SystemInfo.deviceUniqueIdentifier);
 				#endif

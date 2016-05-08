@@ -73,52 +73,59 @@ public class Main : MonoBehaviour
 
 	void UserFetched (string uid, float longitude, float latitude, float altutide)
 	{
-		if (!users.ContainsKey (uid)) {
-			float range = 5f;
-			float range_h = range*0.5f;
-			Log (LogType.Log, "New User init...");
-			GameObject e = (GameObject)Instantiate (user);
-			//map lat lonig alt to 3d 
-//			float x = (float)Utils.Mapf (longitude, LEFT, RIGHT, -max, max, false);
-//			float y = (float)Utils.Mapf (latitude, TOP, BOTTOM, -max, max, true);
-//			float z = (float)Utils.Mapf (altutide, TOP, BOTTOM, 0.0f, max, true);
-//			Log ("uid :"+uid +"| x: " + x + "| y: " + y + "| z: " + z);
-//			e.transform.position = new Vector3 (x, y, z);
-			e.transform.position = new Vector3 (
-				UnityEngine.Random.value * range - range_h,
-				UnityEngine.Random.value * range_h,
-				UnityEngine.Random.value * range - range_h);
-			e.transform.localScale = new Vector3 (-0.5f, -0.5f, -0.5f);
-			User u = e.GetComponent<User> ();
-			u.uid = uid;
-			u.parentRef = e;
-			u.centerRef = sphere;
-			u.userDeadDelegate += UserDead;
-			u.getClipDelegate += GetAudioClip;
-			//attach adio source if needed
-			if (audioSources.Count < numObjects && soundfields.Count > 0) {
-				int index = (int)(UnityEngine.Random.value * soundfields.Count);
-				AudioClip audioClip = soundfields [index];
-				Log (LogType.Log, "soundfields " + index + " " + audioClip.ToString ());
+		#if UNITY_EDITOR
+		string myuid = "debugger";
+		#else
+		string myuid = SystemInfo.deviceUniqueIdentifier);
+		#endif
+		if (myuid.CompareTo (myuid) != 0) {
+			if (!users.ContainsKey (uid)) {
+				float range = 5f;
+				float range_h = range * 0.5f;
+				Log (LogType.Log, "New User init...");
+				GameObject e = (GameObject)Instantiate (user);
+				//map lat lonig alt to 3d 
+				float x = (float)Utils.Mapf (longitude, LEFT, RIGHT, -max, max, false);
+				float y = (float)Utils.Mapf (altutide, 0, 100, 0.0f, max, true);
+				float z = (float)Utils.Mapf (latitude, TOP, BOTTOM, -max, max, true);
+				Log (LogType.Log, "uid :" + uid + "| x: " + x + "| y: " + y + "| z: " + z);
+				e.transform.position = new Vector3 (x, y, z);
+//			e.transform.position = new Vector3 (
+//				UnityEngine.Random.value * range - range_h,
+//				UnityEngine.Random.value * range_h,
+//				UnityEngine.Random.value * range - range_h);
+				e.transform.localScale = new Vector3 (-0.5f, -0.5f, -0.5f);
+				User u = e.GetComponent<User> ();
+				u.uid = uid;
+				u.parentRef = e;
+				u.centerRef = sphere;
+				u.userDeadDelegate += UserDead;
+				u.getClipDelegate += GetAudioClip;
+				//attach adio source if needed
+				if (audioSources.Count < numObjects && soundfields.Count > 0) {
+					int index = (int)(UnityEngine.Random.value * soundfields.Count);
+					AudioClip audioClip = soundfields [index];
+					Log (LogType.Log, "soundfields " + index + " " + audioClip.ToString ());
 
-				AudioSource ac = e.GetComponent <AudioSource> ();
-				audioSources [uid] = ac;
-				ac.clip = audioClip;
-				ac.Play ();
-				ac.volume = 0.0f;
-				StartCoroutine (AudioFadeOut.FadeIn (ac, 0.5f));
-			}
+					AudioSource ac = e.GetComponent <AudioSource> ();
+					audioSources [uid] = ac;
+					ac.clip = audioClip;
+					ac.Play ();
+					ac.volume = 0.0f;
+					StartCoroutine (AudioFadeOut.FadeIn (ac, 0.5f));
+				}
 
 //			audioSources[i] = e.AddComponent <AudioSource>();
 			
 
-			users [uid] = e;
+				users [uid] = e;
 
-		} else {
-			Log (LogType.Log, "User Exist skip init");
-			GameObject o = (GameObject)users [uid];
-			User u = o.GetComponent<User> ();
-			u.age = 100.0f;
+			} else {
+				Log (LogType.Log, "User Exist skip init");
+				GameObject o = (GameObject)users [uid];
+				User u = o.GetComponent<User> ();
+				u.age = 100.0f;
+			}
 		}
 	}
 	AudioClip GetAudioClip(){
