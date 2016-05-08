@@ -11,22 +11,85 @@ public class LoadAssets : MonoBehaviour
     public const string AssetBundlesOutputPath = "/AssetBundles/";
     public string assetBundleName;
 	public List<string> assetNames;
-	public delegate void AssetLoadedDelegate();
+	public delegate void AssetLoadedDelegate(string assetBundleName);
 	public AssetLoadedDelegate assetLoadedDelegate;
 
+	#if UNITY_EDITOR || DEVELOPMENT_BUILD
+	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/config";
+	#elif
+	public string url = "http://www.moneme.com/Archipelodio/api/api/config";
+	#endif
 
     // Use this for initialization
     IEnumerator Start()
     {
         yield return StartCoroutine(Initialize());
 
+//		WWW www = new WWW (url);
+//		yield return www;
+//		try {
+//			if (www.error == null) {
+//
+//				Processjson (www.text);
+//			} else {
+//				Debug.Log ("ERROR: " + www.error);
+//			}
+//		} catch (Exception e) {
+//			Debug.Log ("Error: " + e);
+//		}
+
         // Load asset.
-		assetNames = new List<string>();
-		assetNames.Add("sample");
-		for(int i = 0; i < assetNames.Count ; i++) {
-			yield return StartCoroutine(InstantiateGameObjectAsync(assetBundleName, assetNames[i], typeof (AudioClip)));
-		}
+//		assetNames = new List<string>();
+//		assetNames.Add("sample");
+//		for(int i = 0; i < assetNames.Count ; i++) {
+//			yield return StartCoroutine(InstantiateGameObjectAsync(assetBundleName, assetNames[i], typeof (AudioClip)));
+//		}
     }
+
+	private void Processjson (string jsonString)
+	{
+		//		Debug.Log ("Processjson: " + jsonString);
+		JSONObject jsonvale = new JSONObject (jsonString);
+
+		accessData (jsonvale);
+
+	}
+	void accessData (JSONObject obj)
+	{
+		switch (obj.type) {
+		case JSONObject.Type.OBJECT:
+//			Debug.Log ("lid:" + obj ["lid"].str +
+//			"| uid: " + obj ["uid"].str +
+//			"| loclat: " + obj ["loclat"].str +
+//			"| loclong: " + obj ["loclong"].str +
+//			"| heading: " + obj ["heading"].str +
+//			"| altitude: " + obj ["altitude"].str +
+//			"| timestamp: " + obj ["timestamp"].str +
+//			"| tester: " + obj ["tester"].str);
+//			float loclong, loclat, altitude;
+//			float.TryParse (obj ["loclong"].str, out loclong); 
+//			float.TryParse (obj ["loclat"].str, out loclat);
+//			float.TryParse (obj ["altitude"].str, out altitude);
+			accessData (obj);
+			break;
+		case JSONObject.Type.BOOL:
+			
+			break;
+		case JSONObject.Type.NUMBER:
+
+			break;
+		case JSONObject.Type.STRING:
+
+			break;
+		case JSONObject.Type.ARRAY:
+			foreach (JSONObject j in obj.list) {
+				accessData (j);
+
+			}
+			break;
+
+		}
+	}
 
     // Initialize the downloading URL.
     // eg. Development server / iOS ODR / web URL
@@ -88,7 +151,7 @@ public class LoadAssets : MonoBehaviour
 //		if (prefab != null)
 
 		if (assetLoadedDelegate != null) {
-			assetLoadedDelegate ();
+			assetLoadedDelegate (assetBundleName);
 		}
         
         // Calculate and display the elapsed time.

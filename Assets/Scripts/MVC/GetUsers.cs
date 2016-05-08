@@ -13,18 +13,21 @@ public class GetUsers : MonoBehaviour
 	// Use this for initialization
 	public delegate void FetchedUserDelegate(string a, float b, float c, float d);
 	public FetchedUserDelegate fetchedUserDelegate;
-	void Start ()
+	IEnumerator Start ()
 	{
 		Debug.Log ("Verbose: GetUsers Start");
-//		InvokeRepeating ("IntervalFunction", 0.0f, 10.0F);
-		StartCoroutine ( fetchUser ());
-
+		InvokeRepeating("repeat",0.0f, 10.0f);
+		StartCoroutine (fetchUser ());
+		yield return fetchUser ();
 	}
-
+	void repeat(){
+		Debug.Log("GetUsers repeat");
+		StartCoroutine(fetchUser ());
+	}
 	IEnumerator fetchUser ()
 	{
-		yield return new WaitForSeconds (2.0f);
 		Debug.Log ("Verbose: fetchUser");
+
 		WWW www = new WWW (url);
 		yield return www;
 		try {
@@ -37,19 +40,12 @@ public class GetUsers : MonoBehaviour
 		} catch (Exception e) {
 			Debug.Log ("Error: " + e);
 		}
-		Debug.Log ("Verbose: fetchUser finished");
 	}
-
-//	void IntervalFunction ()
-//	{
-////		InvokeRepeating ("IntervalFunction", 10.0f, 1.0F);
-////		StartCoroutine ("fetchUser");
-//		fetchUser ();
-//	}
+		
 
 	private void Processjson (string jsonString)
 	{
-		Debug.Log ("Processjson: " + jsonString);
+//		Debug.Log ("Processjson: " + jsonString);
 		JSONObject jsonvale = new JSONObject (jsonString);
 
 		accessData (jsonvale);
@@ -60,14 +56,14 @@ public class GetUsers : MonoBehaviour
 	{
 		switch (obj.type) {
 		case JSONObject.Type.OBJECT:
-			Debug.Log ("lid:" + obj ["lid"].str +
-			"| uid: " + obj ["uid"].str +
-			"| loclat: " + obj ["loclat"].str +
-			"| loclong: " + obj ["loclong"].str +
-			"| heading: " + obj ["heading"].str +
-			"| altitude: " + obj ["altitude"].str +
-			"| timestamp: " + obj ["timestamp"].str +
-			"| tester: " + obj ["tester"].str);
+//			Debug.Log ("lid:" + obj ["lid"].str +
+//			"| uid: " + obj ["uid"].str +
+//			"| loclat: " + obj ["loclat"].str +
+//			"| loclong: " + obj ["loclong"].str +
+//			"| heading: " + obj ["heading"].str +
+//			"| altitude: " + obj ["altitude"].str +
+//			"| timestamp: " + obj ["timestamp"].str +
+//			"| tester: " + obj ["tester"].str);
 			float loclong,loclat,altitude;
 			float.TryParse (obj ["loclong"].str, out loclong); 
 			float.TryParse(obj ["loclat"].str, out loclat);
@@ -84,18 +80,6 @@ public class GetUsers : MonoBehaviour
 
 			}
 			break;
-//		case JSONObject.Type.STRING:
-//			Debug.Log(obj.str);
-//			break;
-//		case JSONObject.Type.NUMBER:
-//			Debug.Log(obj.n);
-//			break;
-//		case JSONObject.Type.BOOL:
-//			Debug.Log(obj.b);
-//			break;
-//		case JSONObject.Type.NULL:
-//			Debug.Log("NULL");
-//			break;
 
 		}
 	}

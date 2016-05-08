@@ -18,7 +18,7 @@ public class SubmitLocation : MonoBehaviour
 
 	IEnumerator Start ()
 	{
-//		InvokeRepeating ("IntervalFunction", 0.0f, 10.0F);
+		InvokeRepeating ("IntervalFunction", 0.0f, 10.0F);
 		latitude = 0;
 		longitude = 0;
 		altitude = 0;
@@ -56,22 +56,24 @@ public class SubmitLocation : MonoBehaviour
 		altitude = Input.location.lastData.altitude;
 		heading = Input.compass.trueHeading;
 		// Stop service if there is no need to query location updates continuously
-		StartCoroutine (sendLocation ());
 
+		yield return sendLocation ();
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-	
+		
 	}
 
-
+	void IntervalFunction(){
+		StartCoroutine (sendLocation ());
+	}
 
 	IEnumerator sendLocation ()
 	{
 		
-		yield return new WaitForSeconds (3.0f);
+		yield return new WaitForSeconds (1.0f);
 		WWWForm form = new WWWForm ();
 		try {
 			if (Input.location.status != LocationServiceStatus.Failed) {
@@ -79,7 +81,7 @@ public class SubmitLocation : MonoBehaviour
 				form.AddField ("loclong", Input.location.lastData.longitude.ToString ());
 				form.AddField ("heading", Input.compass.trueHeading.ToString ());
 				form.AddField ("altitude", Input.location.lastData.altitude.ToString ());
-				Debug.Log ("Verbose: form :" + form.ToString ());
+//				Debug.Log ("Verbose: form :" + form.ToString ());
 				#if UNITY_EDITOR
 				form.AddField ("uid", "debugger");
 				#else

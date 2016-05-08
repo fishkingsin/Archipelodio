@@ -10,7 +10,16 @@ using System.Runtime.InteropServices;
 
 public class CameraRotateEffect : MonoBehaviour
 {
-	
+	//top left: (gps format is 22.60,113.82)
+	public static float TOP = 22.60f;
+	public static float LEFT = 113.82f;
+
+	//bottom right: (gps format is 22.12, 114.42)
+	public static float BOTTOM = 22.12f;
+	public static float RIGHT = 114.42f;
+
+	float max = 5.0f;
+
 	private float currentDegree;
 	private float diff;
 	void Start ()
@@ -23,17 +32,34 @@ public class CameraRotateEffect : MonoBehaviour
 	{
 		float degree = 0;
 		if (!Input.compass.enabled) {
-			degree = Time.time * 5;
+			degree = -Time.time * 5;
 		}else{
 			degree = Mathf.Round(Input.compass.trueHeading);
 		}
 		
-		diff = -degree - currentDegree ; 
-		transform.Rotate (0,diff,0);
+
+		StartCoroutine (RotateCamera(degree));
+		transform.localRotation = Quaternion.Euler (0,currentDegree,0);
 		currentDegree = -degree;
 
-	}
+//		if(Input.location.status == LocationServiceStatus.Running){
+//			float x = (float)Utils.Mapf (Input.location.lastData.longitude, LEFT, RIGHT, -max, max, false);
+//			float y = (float)Utils.Mapf (Input.location.lastData.altitude, 0, 100, 0.0f, max, true);
+//			float z = (float)Utils.Mapf (Input.location.lastData.latitude, TOP, BOTTOM, -max, max, true);
+//			Debug.Log ( " | x: " + x + " | y: " + y + " | z: " + z);
+//			transform.position = new Vector3 (x, y, z);
+//		}
 
+	}
+	IEnumerator RotateCamera(float toDegree){
+		while (Mathf.Abs (currentDegree-toDegree) < 0.1) {
+			
+			currentDegree = Mathf.Lerp(currentDegree , -toDegree , 0.1f ); 
+
+			yield return null;
+		}
+
+	}
 	public float Sum (params float[] customerssalary)
 	{
 		float result = 0;

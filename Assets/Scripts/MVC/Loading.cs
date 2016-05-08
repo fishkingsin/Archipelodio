@@ -22,9 +22,9 @@ public class Loading : MonoBehaviour {
 			SceneManager.LoadScene ("Menu");
 		}
 	}
-	void AssetLoaded ()
+	void AssetLoaded (string assetBundleName)
 	{
-		Debug.Log ("AssetLoaded");
+		Debug.Log ("AssetLoaded " + assetBundleName);
 		canLoadScene = true;
 
 	}

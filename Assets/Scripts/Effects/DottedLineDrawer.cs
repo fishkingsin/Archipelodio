@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using System.Collections;
 using AssemblyCSharp;
 
@@ -17,8 +18,10 @@ public class DottedLineDrawer : MonoBehaviour {
 		//x axis
 		for (int i = 0; i < numObjects; i++) {
 			GameObject e = Instantiate (dot);
+
 			e.transform.position = new Vector3 ( (i*0.5f)-25.0f, 0, 0);
 			e.transform.localScale = new Vector3 (_scale, _scale, _scale);
+			e.transform.parent = transform;
 			SpriteRenderer renderer = e.GetComponents<SpriteRenderer>()[0];
 			renderer.color = HSBColor.ToColor(
 				new HSBColor(
@@ -33,6 +36,7 @@ public class DottedLineDrawer : MonoBehaviour {
 		for (int i = 0; i < numObjects; i++) {
 			GameObject e = Instantiate (dot);
 			e.transform.position = new Vector3 (0, 0, (i*0.5f)-25.0f);
+			e.transform.parent = transform;
 			e.transform.localScale = new Vector3 (_scale, _scale, _scale);
 			SpriteRenderer renderer = e.GetComponents<SpriteRenderer>()[0];
 			renderer.color = HSBColor.ToColor(
@@ -46,7 +50,7 @@ public class DottedLineDrawer : MonoBehaviour {
 
 		for (int i = 0; i < numObjects; i++) {
 			GameObject e = Instantiate (dot);
-
+			e.transform.parent = transform;
 			float y = Mathf.Sin(((i*1.0f)/numObjects)*Mathf.PI*2)*5;
 			float x = 0 ;
 			float z = Mathf.Cos(((i*1.0f)/numObjects)*Mathf.PI*2)*5;
