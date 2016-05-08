@@ -14,7 +14,7 @@ public class Main : MonoBehaviour
 	//bottom right: (gps format is 22.12, 114.42)
 	public static float BOTTOM = 22.12f;
 	public static float RIGHT = 114.42f;
-
+	public int maxNumUser;
 	public Hashtable audioSources;
 	public GameObject canvas;
 	public GameObject user;
@@ -57,7 +57,7 @@ public class Main : MonoBehaviour
 //		Component[] componenets = obj.GetComponents<Component> ();
 		GameObject gameObject = (GameObject)users [uid];
 		if (gameObject) {
-			Debug.Log ("gameObject " + gameObject.ToString () + " of uid " + uid);
+			Debug.Log ("UserDead " + gameObject.ToString () + " of uid " + uid);
 			if (gameObject.GetComponent<AudioSource> ()) {
 				AudioSource audioSource = gameObject.GetComponent <AudioSource> ();
 				if (audioSource.Equals (dialogAudioSourceRef)) {
@@ -80,6 +80,7 @@ public class Main : MonoBehaviour
 			audioSources.Remove (uid);
 			Destroy (gameObject, 0.0f);
 			users.Remove (uid);
+			AudioSourceCompleted (uid);
 		}
 	}
 
@@ -88,63 +89,107 @@ public class Main : MonoBehaviour
 		if (Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Ended) {
 			isShowing = !isShowing;
 			canvas.SetActive (isShowing);
-
 		}
-
-
-
 	}
 
 	void UserFetched (string uid, float longitude, float latitude, float altutide)
 	{
-		#if UNITY_EDITOR
-		string myuid = "debugger";
-		#else
+		try {
+			#if UNITY_EDITOR
+			string myuid = "debugger";
+			#else
 		string myuid = SystemInfo.deviceUniqueIdentifier;
-		#endif
+			#endif
 
-		if (uid.CompareTo (myuid) != 0) {
-			if (!users.ContainsKey (uid)) {
-//				float range = 5f;
-//				float range_h = range * 0.5f;
-//				Log (LogType.Log, "New User init...");
-				GameObject e = (GameObject)Instantiate (user);
-				//map lat lonig alt to 3d 
-				float x = (float)Utils.Mapf (longitude, LEFT, RIGHT, -max, max, false);
-				float y = (float)Utils.Mapf (altutide, 0, 100, 0.0f, max, true);
-				float z = (float)Utils.Mapf (latitude, TOP, BOTTOM, -max, max, true);
-				Log (LogType.Log, "uid :" + uid + " | x: " + x + " | y: " + y + " | z: " + z);
-				e.transform.position = new Vector3 (x, y, z);
-				e.transform.localScale = new Vector3 (-0.5f, -0.5f, -0.5f);
-				User u = e.GetComponent<User> ();
-				u.uid = uid;
-				u.centerRef = sphere;
-				u.userDeadDelegate += UserDead;
-				u.getClipDelegate += GetAudioClip;
-				u.audioSourceCompleted += AudioSourceCompleted;
-				if (audioSources.Count < numObjects && soundfields.Count > 0) {
+			if (uid.CompareTo (myuid) != 0) {
+				
+				if (users [uid] == null && users.Count < maxNumUser) {
+					try {
+						GameObject e = (GameObject)Instantiate (user);
+						//map lat lonig alt to 3d 
+						float x = (float)Utils.Mapf (longitude, LEFT, RIGHT, -max, max, false);
+						float y = (float)Utils.Mapf (altutide, 0, 100, 0.0f, max, true);
+						float z = (float)Utils.Mapf (latitude, TOP, BOTTOM, -max, max, true);
+						Log (LogType.Log, "uid :" + uid + " | x: " + x + " | y: " + y + " | z: " + z);
+						e.transform.position = new Vector3 (x, y, z);
+						e.transform.localScale = new Vector3 (-0.5f, -0.5f, -0.5f);
+						User u = e.GetComponent<User> ();
+						u.uid = uid;
+						u.centerRef = sphere;
+						u.userDeadDelegate += UserDead;
+						u.getClipDelegate += GetAudioClip;
+						u.audioSourceCompleted += AudioSourceCompleted;
+						AudioSource audioSource = e.GetComponent <AudioSource> ();
+						audioSources [uid] = audioSource;
+						AssignAudioClip (ref audioSource, uid);
+						users [uid] = e;
+					} catch (Exception exception) {
+						Debug.Log ("UserFetched New User: " + exception.ToString ());
+					}
+
+				} else {
+					try {
+//					
+
+
+//						Debug.Log( "User Exist skip init " + users [uid]);
+						GameObject o = (GameObject)users [uid];
+						if (o != null) {
+							if (o.GetComponent<User> () != null) {
+								User u = o.GetComponent<User> ();
+								u.recharge ();
+							}
+							
+							if (o.GetComponent <AudioSource> () != null) {
+								AudioSource audioSource = o.GetComponent <AudioSource> ();
+								AssignAudioClip (ref audioSource, uid);
+							}
+						}
+
+
+					} catch (Exception exception) {
+						Debug.Log ("UserFetched Exist: " + exception.ToString ());
+					}
+				}
+				
+			} 
+		} catch (Exception exception) {
+			Debug.Log ("UserFetched : " + exception.ToString ());
+		}
+	}
+
+	void AssignAudioClip (ref AudioSource audioSource, string uid)
+	{
+		try {
+			if (dialogAudioSourceRef == null) {
+			
+				ShuffleDialog ();
+				audioSource.clip = GetAudioClip (audioSource);
+				audioSource.Play ();
+				audioSource.volume = 1.0f;
+				dialogAudioSourceRef = audioSource;
+				audioSources [uid] = audioSource;
+				StartCoroutine (AudioFadeOut.FadeIn (audioSource, 0.5f));
+				Debug.Log ("AssignAudioClip : " + audioSource.clip);
+				
+
+			} else if (audioSources.Count < numObjects && soundfields.Count > 0) {
+				try {
 					int index = (int)(UnityEngine.Random.value * soundfields.Count);
 					AudioClip audioClip = soundfields [index];
-					Log (LogType.Log, "soundfields " + index + " " + audioClip.ToString ());
-
-					AudioSource audioSource = e.GetComponent <AudioSource> ();
-					audioSources [uid] = audioSource;
 					audioSource.clip = audioClip;
 					audioSource.Play ();
-					audioSource.volume = 0.0f;
+					audioSource.volume = 1.0f;
 					StartCoroutine (AudioFadeOut.FadeIn (audioSource, 0.5f));
+					audioSources [uid] = audioSource;
+					Debug.Log ("AssignAudioClip : " + audioSource.clip);
+				} catch (Exception exception) {
+					Debug.Log ("AssignAudioClip : " + exception.Message);
 				}
-
-				users [uid] = e;
-
-			} else {
-				Log (LogType.Log, "User Exist skip init");
-				GameObject o = (GameObject)users [uid];
-				User u = o.GetComponent<User> ();
-				u.age = 100;
-			}
-		} 
-
+			} 
+		} catch (Exception exception) {
+			Debug.Log ("AssignAudioClip : " + exception.Message);
+		}
 	}
 
 	AudioClip GetAudioClip (AudioSource audioSource)
@@ -158,7 +203,7 @@ public class Main : MonoBehaviour
 			if (dialogsQueue.Count != 0) {
 				dialogAudioClip = dialogsQueue.Peek ();
 
-				Debug.Log ("Got dailog clip " + dialogAudioClip.ToString ());
+//				Debug.Log ("Got dailog clip " + dialogAudioClip.ToString ());
 			}
 			return dialogAudioClip;
 		} else {
@@ -166,26 +211,47 @@ public class Main : MonoBehaviour
 			if (soundfields.Count > 0) {
 				int index = (int)(UnityEngine.Random.value * soundfields.Count);
 				audioClip = soundfields [index];
-				Log (LogType.Log, "GetAudioClip");
-				Debug.Log ("Got soudnfield clip " + audioClip.ToString ());
+//				Log (LogType.Log,"Got soudnfield clip " + audioClip.ToString ());
 			}
 			return audioClip;
 		}
 	}
-	void AudioSourceCompleted(string uid){
-		//TODO more implementation here
-		AudioSource audioSource = (AudioSource)audioSources[uid];
-		if (audioSource != null) {
-			audioSource.clip = null;
-			if (audioSource.Equals (dialogAudioSourceRef)) {
-				dialogAudioSourceRef = null;
+
+	void AudioSourceCompleted (string uid)
+	{
+		try {
+			//TODO more implementation here
+			AudioSource audioSource = (AudioSource)audioSources [uid];
+			if (audioSource != null) {
+				audioSource.clip = null;
+				if (audioSource.Equals (dialogAudioSourceRef)) {
+					dialogAudioSourceRef = null;
+				}
+				audioSources.Remove (uid);
 			}
-			audioSources.Remove (uid);
+			ICollection collection = users.Keys;
+			string[] keys = new string[collection.Count];
+			collection.CopyTo (keys, 0);
+			int index = (int)(UnityEngine.Random.value * keys.Length);
+			int count = 0;
+			audioSource = ((GameObject)users [keys [index]]).GetComponent<AudioSource> ();
+//			while (audioSource.clip != null && count < users.Count) {
+//				index = (int)(UnityEngine.Random.value * keys.Length);
+//				audioSource =  ((GameObject)users [keys [index]]).GetComponent<AudioSource> ();
+//
+//				count++;
+//				Debug.Log ("AudioSourceCompleted count : " + count);
+//			}
+			AssignAudioClip (ref audioSource, uid);
+		} catch (Exception exception) {
+			Debug.Log ("AudioSourceCompleted exception : " + exception.ToString ());
 		}
 	}
+
 	void AssetLoaded (string assetBundleName)
 	{
 		if (AssetBundleManager.IsAssetBundleDownloaded (assetBundleName)) {
+			Log (LogType.Log, "AssetLoaded : " + assetBundleName);
 			string err;
 			LoadedAssetBundle loadedAssetBundle = AssetBundleManager.GetLoadedAssetBundle (assetBundleName, out err);
 			if (err == null) {
@@ -201,10 +267,10 @@ public class Main : MonoBehaviour
 					}
 						
 					for (int i = 0; i < dialogs.Count; i++) {
-						Log (LogType.Log,"dialogs : -> " + dialogs [i].ToString () + " | Class : " + dialogs [i].GetType ());
+						Log (LogType.Log, "dialogs : -> " + dialogs [i].ToString () + " | Class : " + dialogs [i].GetType ());
 					}
 					for (int i = 0; i < soundfields.Count; i++) {
-						Log (LogType.Log,"soundfields : -> " + soundfields [i].ToString () + " | Class : " + soundfields [i].GetType ());
+						Log (LogType.Log, "soundfields : -> " + soundfields [i].ToString () + " | Class : " + soundfields [i].GetType ());
 					}
 
 				}

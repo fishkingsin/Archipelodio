@@ -17,16 +17,17 @@ public class GetUsers : MonoBehaviour
 	{
 		Debug.Log ("Verbose: GetUsers Start");
 		InvokeRepeating("repeat",0.0f, 10.0f);
-		StartCoroutine (fetchUser ());
-		yield return fetchUser ();
+//		StartCoroutine (fetchUser ());
+//		yield return fetchUser ();
+		yield return null;
 	}
 	void repeat(){
-		Debug.Log("GetUsers repeat");
+//		Debug.Log("GetUsers repeat");
 		StartCoroutine(fetchUser ());
 	}
 	IEnumerator fetchUser ()
 	{
-		Debug.Log ("Verbose: fetchUser");
+//		Debug.Log ("Verbose: fetchUser");
 
 		WWW www = new WWW (url);
 		yield return www;
@@ -68,11 +69,15 @@ public class GetUsers : MonoBehaviour
 			float.TryParse (obj ["loclong"].str, out loclong); 
 			float.TryParse(obj ["loclat"].str, out loclat);
 			float.TryParse(obj ["altitude"].str, out altitude);
+			try{
 			fetchedUserDelegate (obj ["uid"].str, 
 				loclong,
 				loclat,
 				altitude
 				);
+			}catch(Exception exception ){
+				Debug.Log(exception.Message);
+			}
 			break;
 		case JSONObject.Type.ARRAY:
 			foreach (JSONObject j in obj.list) {

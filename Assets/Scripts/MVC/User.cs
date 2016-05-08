@@ -19,7 +19,7 @@ public class User : MonoBehaviour
 
 
 
-	public float maxAge;
+	public int maxAge;
 	public int age;
 	public string uid;
 
@@ -55,11 +55,10 @@ public class User : MonoBehaviour
 		} else {
 			age -= 1;
 			float s = Mathf.Min (age,10.0f) / 10.0f;
-			Debug.Log ("scale :" + s);
 			transform.localScale = mScale * s;
 			if (audioSource != null) {
 
-				if (!audioSource.isPlaying) {
+				if (!audioSource.isPlaying && audioSource.clip != null) {
 					if (getClipDelegate != null) {
 //						Debug.Log ("User : " + uid + " player stop load new ");
 						if (audioSourceCompleted != null) {
@@ -94,5 +93,8 @@ public class User : MonoBehaviour
 
 		transform.LookAt (Camera.main.transform);
 
+	}
+	public void recharge(){
+		age = maxAge;
 	}
 }
