@@ -19,14 +19,13 @@ public class Loading : MonoBehaviour {
 		if (canLoadScene) {
 			canLoadScene = false;
 			Debug.Log ("canLoadScene");
-			SceneManager.LoadScene ("Main");
+			SceneManager.LoadScene ("Menu");
 		}
 	}
 	void AssetLoaded ()
 	{
 		Debug.Log ("AssetLoaded");
-		if (AssetBundleManager.IsAssetBundleDownloaded ("audio")) {
-			canLoadScene = true;
-		}
+		canLoadScene = true;
+
 	}
 }

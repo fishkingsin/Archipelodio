@@ -22,66 +22,7 @@ public class LoadAssets : MonoBehaviour
 
         // Load asset.
 		assetNames = new List<string>();
-		assetNames.Add("F2_D10_Em_OLc");
-//		assetNames.Add("F2_D1_Em_OLc");
-//		assetNames.Add("F2_D2_Em_OLc");
-//		assetNames.Add("F2_D3_Em_OLc");
-//		assetNames.Add("F2_D4_Em_OLc");
-//		assetNames.Add("F2_D5_Em_OLc");
-//		assetNames.Add("F2_D6_Em_OLc");
-//		assetNames.Add("F2_D7_Em_OLc");
-//		assetNames.Add("F2_D8_Em_OLc");
-//		assetNames.Add("F2_D9_Em_OLc");
-//		assetNames.Add("F4_D10_Em_OLc");
-//		assetNames.Add("F4_D11_Em_OLc");
-//		assetNames.Add("F4_D12_Em_OLc");
-//		assetNames.Add("F4_D13_Em_OLc");
-//		assetNames.Add("F4_D14_Em_OLc");
-//		assetNames.Add("F4_D15_Em_OLc");
-//		assetNames.Add("F4_D16_Em_OLc");
-//		assetNames.Add("F4_D17_Em_OLc");
-//		assetNames.Add("F4_D1_Em_OLc");
-//		assetNames.Add("F4_D2_Em_OLc");
-//		assetNames.Add("F4_D3_Em_OLc");
-//		assetNames.Add("F4_D4_Em_OLc");
-//		assetNames.Add("F4_D5_Em_OLc");
-//		assetNames.Add("F4_D6_Em_OLc");
-//		assetNames.Add("F4_D7_Em_OLc");
-//		assetNames.Add("F4_D8_Em_OLc");
-//		assetNames.Add("F4_D9_Em_OLc");
-//		assetNames.Add("F5_D1_Em_OLc");
-//		assetNames.Add("F5_D2_Em_OLc");
-//		assetNames.Add("F5_D3_Em_OLc");
-//		assetNames.Add("F5_D4_Em_OLc");
-//		assetNames.Add("F5_D5_Em_OLc");
-//		assetNames.Add("F5_D6_Em_OLc");
-//		assetNames.Add("F5_D7_Em_OLc");
-//		assetNames.Add("F5_D8_Em_OLc");
-//		assetNames.Add("F7_D10_Em_OLm");
-//		assetNames.Add("F7_D11_Em_OLm");
-//		assetNames.Add("F7_D12_Em_OLm");
-//		assetNames.Add("F7_D13_Em_OLm");
-//		assetNames.Add("F7_D1_Em_OLm");
-//		assetNames.Add("F7_D2_Em_OLm");
-//		assetNames.Add("F7_D3_Em_OLm");
-//		assetNames.Add("F7_D4_Em_OLm");
-//		assetNames.Add("F7_D5_GShekTongTsui_OLm");
-//		assetNames.Add("F7_D6_GShekTongTsui_OLm");
-//		assetNames.Add("F7_D7_GShekTongTsui_OLm");
-//		assetNames.Add("F7_D8_GShekTongTsui_OLm");
-//		assetNames.Add("F7_D9_GShekTongTsui_OLm");
-//		assetNames.Add("R1_KennedyTown_1534_bip");
-//		assetNames.Add("R2_Central_2216_bip");
-//		assetNames.Add("R3_Yaumatei_1620_bip");
-//		assetNames.Add("R4_tst_1205_bip");
-//		assetNames.Add("R5_Mongkok_1540_bip");
-//		assetNames.Add("R6_Central_2350_bip");
-//		assetNames.Add("R7_Central_SheungWan_2229_P1");
-//		assetNames.Add("R7_Central_SheungWan_2229_P2");
-//		assetNames.Add("R7_Central_SheungWan_2229_P3");
-//		assetNames.Add("R7_Central_SheungWan_2229_P4");
-//		assetNames.Add("R7_Central_SheungWan_2229_P5");
-
+		assetNames.Add("sample");
 		for(int i = 0; i < assetNames.Count ; i++) {
 			yield return StartCoroutine(InstantiateGameObjectAsync(assetBundleName, assetNames[i], typeof (AudioClip)));
 		}
