@@ -16,7 +16,7 @@ public class LoadAssets : MonoBehaviour
 
 	#if UNITY_EDITOR || DEVELOPMENT_BUILD
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/config";
-	#elif
+	#else
 	public string url = "http://www.moneme.com/Archipelodio/api/api/config";
 	#endif
 
@@ -103,7 +103,7 @@ public class LoadAssets : MonoBehaviour
             return;
         }
         #endif
-		#if DEVELOPMENT_BUILD || UNITY_EDITOR
+		#if DEVELOPMENT_BUILD || 	UNITY_EDITOR
         // With this code, when in-editor or using a development builds: Always use the AssetBundle Server
         // (This is very dependent on the production workflow of the project.
         //      Another approach would be to make this configurable in the standalone player.)

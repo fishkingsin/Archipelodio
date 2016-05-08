@@ -7,7 +7,7 @@ public class GetUsers : MonoBehaviour
 	public GameObject user;
 	#if UNITY_EDITOR || DEVELOPMENT_BUILD
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/users";
-	#elif
+	#else
 	public string url = "http://www.moneme.com/Archipelodio/api/api/users";
 	#endif
 	// Use this for initialization

@@ -7,7 +7,7 @@ public class SubmitLocation : MonoBehaviour
 {
 	#if UNITY_EDITOR || DEVELOPMENT_BUILD
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/update";
-	#elif
+	#else
 	public string url = "http://www.moneme.com/Archipelodio/api/update";
 	#endif
 	// Use this for initialization
