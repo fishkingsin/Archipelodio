@@ -55,6 +55,7 @@ public class User : MonoBehaviour
 		} else {
 			age -= 1;
 			float s = Mathf.Min (age,10.0f) / 10.0f;
+			Debug.Log ("scale :" + s);
 			transform.localScale = mScale * s;
 			if (audioSource != null) {
 
