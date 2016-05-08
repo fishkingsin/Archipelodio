@@ -32,6 +32,8 @@ public class Main : MonoBehaviour
 
 	List<AudioClip> soundfields;
 	List<AudioClip> dialogs;
+	Queue<AudioClip> dialogsQueue;
+	AudioSource dialogAudioSourceRef;
 
 	void Start ()
 	{
@@ -39,6 +41,7 @@ public class Main : MonoBehaviour
 		dialogs = new List<AudioClip> ();	
 		users = new Hashtable ();
 		audioSources = new Hashtable ();
+		dialogsQueue = new Queue<AudioClip> ();
 		getUser = getUserObject.GetComponent<GetUsers> ();
 		getUser.fetchedUserDelegate += UserFetched;
 
@@ -48,18 +51,17 @@ public class Main : MonoBehaviour
 
 	}
 
-	void UserDead (GameObject obj)
+	void UserDead (GameObject obj,string uid)
 	{
+		audioSources.Remove (uid);
 		AudioSource audioSource = obj.GetComponent <AudioSource> ();
+		if (audioSource.Equals (dialogAudioSourceRef)) {
+			dialogAudioSourceRef = null;
+		}
 		StartCoroutine (AudioFadeOut.FadeOut (audioSource, 0.5f));
 		Destroy (obj, 0.5f);
 
 	}
-
-	//	void IntervalFunction ()
-	//	{
-	//		Debug.Log ("Main IntervalFunction");
-	//	}
 
 	void Update ()
 	{
@@ -76,24 +78,21 @@ public class Main : MonoBehaviour
 		#if UNITY_EDITOR
 		string myuid = "debugger";
 		#else
-		string myuid = SystemInfo.deviceUniqueIdentifier);
+		string myuid = SystemInfo.deviceUniqueIdentifier;
 		#endif
-		if (myuid.CompareTo (myuid) != 0) {
+
+		if (uid.CompareTo (myuid) != 0 ) {
 			if (!users.ContainsKey (uid)) {
-				float range = 5f;
-				float range_h = range * 0.5f;
+//				float range = 5f;
+//				float range_h = range * 0.5f;
 				Log (LogType.Log, "New User init...");
 				GameObject e = (GameObject)Instantiate (user);
 				//map lat lonig alt to 3d 
 				float x = (float)Utils.Mapf (longitude, LEFT, RIGHT, -max, max, false);
 				float y = (float)Utils.Mapf (altutide, 0, 100, 0.0f, max, true);
 				float z = (float)Utils.Mapf (latitude, TOP, BOTTOM, -max, max, true);
-				Log (LogType.Log, "uid :" + uid + "| x: " + x + "| y: " + y + "| z: " + z);
+				Log (LogType.Log, "uid :" + uid + " | x: " + x + " | y: " + y + " | z: " + z);
 				e.transform.position = new Vector3 (x, y, z);
-//			e.transform.position = new Vector3 (
-//				UnityEngine.Random.value * range - range_h,
-//				UnityEngine.Random.value * range_h,
-//				UnityEngine.Random.value * range - range_h);
 				e.transform.localScale = new Vector3 (-0.5f, -0.5f, -0.5f);
 				User u = e.GetComponent<User> ();
 				u.uid = uid;
@@ -101,7 +100,6 @@ public class Main : MonoBehaviour
 				u.centerRef = sphere;
 				u.userDeadDelegate += UserDead;
 				u.getClipDelegate += GetAudioClip;
-				//attach adio source if needed
 				if (audioSources.Count < numObjects && soundfields.Count > 0) {
 					int index = (int)(UnityEngine.Random.value * soundfields.Count);
 					AudioClip audioClip = soundfields [index];
@@ -115,9 +113,6 @@ public class Main : MonoBehaviour
 					StartCoroutine (AudioFadeOut.FadeIn (ac, 0.5f));
 				}
 
-//			audioSources[i] = e.AddComponent <AudioSource>();
-			
-
 				users [uid] = e;
 
 			} else {
@@ -128,11 +123,22 @@ public class Main : MonoBehaviour
 			}
 		}
 	}
-	AudioClip GetAudioClip(){
-		int index = (int)(UnityEngine.Random.value * soundfields.Count);
-		AudioClip audioClip = soundfields [index];
-		Log (LogType.Log, "GetAudioClip");
-		return audioClip;
+	AudioClip GetAudioClip(AudioSource audioSource){
+		if (dialogAudioSourceRef == null && !audioSource.Equals (dialogAudioSourceRef)) {
+			dialogAudioSourceRef = audioSource;
+			if (dialogsQueue.Count == 0) {
+				ShuffleDialog ();
+			}
+			AudioClip dialogAudioClip = dialogsQueue.Dequeue ();;
+			Debug.Log ("Got dailog clip " + dialogAudioClip.ToString ());
+			return dialogAudioClip;
+		} else {
+			int index = (int)(UnityEngine.Random.value * soundfields.Count);
+			AudioClip audioClip = soundfields [index];
+			Log (LogType.Log, "GetAudioClip");
+			Debug.Log ("Got soudnfield clip " + audioClip.ToString ());
+			return audioClip;
+		}
 	}
 	void AssetLoaded ()
 	{
@@ -151,16 +157,27 @@ public class Main : MonoBehaviour
 						}
 					}
 						
-					for (int i = 0; i < dialogs.Count; i++) {
-						Log (LogType.Log,"dialogs : -> " + dialogs [i].ToString () + " | Class : " + dialogs [i].GetType ());
-					}
-					for (int i = 0; i < soundfields.Count; i++) {
-						Log (LogType.Log,"soundfields : -> " + soundfields [i].ToString () + " | Class : " + soundfields [i].GetType ());
-					}
+//					for (int i = 0; i < dialogs.Count; i++) {
+//						Log (LogType.Log,"dialogs : -> " + dialogs [i].ToString () + " | Class : " + dialogs [i].GetType ());
+//					}
+//					for (int i = 0; i < soundfields.Count; i++) {
+//						Log (LogType.Log,"soundfields : -> " + soundfields [i].ToString () + " | Class : " + soundfields [i].GetType ());
+//					}
+
 				}
 			}
 		}
 
+
+	}
+
+	private void ShuffleDialog (){
+		List<AudioClip> tempList = dialogs;
+		Utils.Shuffle(ref tempList);	
+
+		foreach (AudioClip ac in tempList) {
+			dialogsQueue.Enqueue (ac);
+		}
 
 	}
 

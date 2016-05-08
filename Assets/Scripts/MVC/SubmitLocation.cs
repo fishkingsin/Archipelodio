@@ -5,7 +5,11 @@ using System.Collections.Generic;
 
 public class SubmitLocation : MonoBehaviour
 {
+	#if UNITY_EDITOR || DEVELOPMENT_BUILD
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/update";
+	#elif
+	public string url = "http://www.moneme.com/Archipelodio/api/update";
+	#endif
 	// Use this for initialization
 	public double latitude;
 	public double longitude;
@@ -47,7 +51,10 @@ public class SubmitLocation : MonoBehaviour
 
 
 		}
-
+		latitude = Input.location.lastData.latitude;
+		longitude = Input.location.lastData.longitude;
+		altitude = Input.location.lastData.altitude;
+		heading = Input.compass.trueHeading;
 		// Stop service if there is no need to query location updates continuously
 		StartCoroutine (sendLocation ());
 
@@ -59,24 +66,7 @@ public class SubmitLocation : MonoBehaviour
 	
 	}
 
-//	void IntervalFunction ()
-//	{
-//		
-//		if (Input.location.status == LocationServiceStatus.Running) {
-//			// Access granted and location value could be retrieved
-//			Debug.Log ("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
-//			latitude = Input.location.lastData.latitude;
-//			longitude = Input.location.lastData.longitude;
-//			altitude = Input.location.lastData.altitude;
-//			if (Input.compass.enabled) {
-//				heading = Input.compass.trueHeading;
-//			}
-//
-//
-//		}
-//		sendLocation ();
-////		InvokeRepeating ("IntervalFunction", 10.0f, 1.0F);
-//	}
+
 
 	IEnumerator sendLocation ()
 	{
@@ -118,10 +108,9 @@ public class SubmitLocation : MonoBehaviour
 		if (Input.location.status != LocationServiceStatus.Running) {
 			return "Faile to read Location";
 		}
-		return "latitude: " + Input.location.lastData.latitude +
-		"\n| longitude: " + Input.location.lastData.longitude +
-		"\n| altitude: " + Input.location.lastData.altitude +
-		"\n| trueHeading: " + Input.compass.trueHeading +
-		"\n| magneticHeading: " + Input.compass.magneticHeading;
+		return "latitude: " + latitude +
+		"\n| longitude: " + longitude +
+		"\n| altitude: " + altitude +
+		"\n| trueHeading: " + heading;
 	}
 }

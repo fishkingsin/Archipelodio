@@ -213,6 +213,7 @@ namespace AssetBundles
             }
             else
             {
+				Debug.Log("Development Server URL url: "+url);
                 AssetBundleManager.SetSourceAssetBundleURL(url);
             }
         }
