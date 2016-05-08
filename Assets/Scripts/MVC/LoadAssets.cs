@@ -39,11 +39,11 @@ public class LoadAssets : MonoBehaviour
 //		}
 
         // Load asset.
-//		assetNames = new List<string>();
-//		assetNames.Add("sample");
-//		for(int i = 0; i < assetNames.Count ; i++) {
-//			yield return StartCoroutine(InstantiateGameObjectAsync(assetBundleName, assetNames[i], typeof (AudioClip)));
-//		}
+		assetNames = new List<string>();
+		assetNames.Add("sample");
+		for(int i = 0; i < assetNames.Count ; i++) {
+			yield return StartCoroutine(InstantiateGameObjectAsync(assetBundleName, assetNames[i], typeof (AudioClip)));
+		}
     }
 
 	private void Processjson (string jsonString)
