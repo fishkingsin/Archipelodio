@@ -15,9 +15,9 @@ public class LoadAssets : MonoBehaviour
 	public AssetLoadedDelegate assetLoadedDelegate;
 
 	#if UNITY_EDITOR || DEVELOPMENT_BUILD
-	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/config";
+	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/assetBundle";
 	#else
-	public string url = "http://www.moneme.com/Archipelodio/api/api/config";
+	public string url = "http://www.moneme.com/Archipelodio/api/api/assetBundle";
 	#endif
 
     // Use this for initialization
@@ -109,6 +109,7 @@ public class LoadAssets : MonoBehaviour
         //      Another approach would be to make this configurable in the standalone player.)
 
         AssetBundleManager.SetDevelopmentAssetBundleServer();
+//		AssetBundleManager.SetSourceAssetBundleURL("http://www.mb09.com/ARCHIPELAUDIO/AssetBundles/");
         return;
         #else
         // Use the following code if AssetBundles are embedded in the project for example via StreamingAssets folder etc:

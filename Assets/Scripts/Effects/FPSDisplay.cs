@@ -18,6 +18,8 @@ public class FPSDisplay : MonoBehaviour {
 
 	void OnGUI()
 	{
+
+		#if UNITY_EDITOR || DEVELOPMENT_BUILD
 		int w = Screen.width, h = Screen.height;
 
 		GUIStyle style = new GUIStyle();
@@ -34,6 +36,7 @@ public class FPSDisplay : MonoBehaviour {
 		}catch(Exception e){
 			Debug.Log ("Eror: " + e);
 		}
+		#endif
 
 	}
 }
