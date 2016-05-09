@@ -5,12 +5,15 @@ using UnityEngine.SceneManagement;
 public class Loading : MonoBehaviour {
 
 	// Use this for initialization
+	public GameObject ProgressBar;
 	public GameObject loadAssetObject;
+
 	LoadAssets loadAsset;
 	bool canLoadScene = false;
 	void Start () {
 		loadAsset = loadAssetObject.GetComponent <LoadAssets> ();
 		loadAsset.assetLoadedDelegate += AssetLoaded;
+		loadAsset.assetDownloadProgressDelegate += AssetDownloadProgress;
 
 	}
 	
@@ -27,5 +30,7 @@ public class Loading : MonoBehaviour {
 		Debug.Log ("AssetLoaded " + assetBundleName);
 		canLoadScene = true;
 
+	}
+	void AssetDownloadProgress(float progress){
 	}
 }

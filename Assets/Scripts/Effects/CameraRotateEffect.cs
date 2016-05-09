@@ -20,27 +20,27 @@ public class CameraRotateEffect : MonoBehaviour
 
 	float max = 5.0f;
 
-	private float currentDegree;
-	private float diff;
+	private int currentDegree;
+	private int diff;
 	void Start ()
 	{
-		currentDegree = 0.0f;
+		currentDegree = 0;
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-		float degree = 0;
-		if (!Input.compass.enabled) {
-			degree = -Time.time * 5;
-		}else{
-			degree = Mathf.Round(Input.compass.trueHeading);
-		}
+//		int degree = 0;
+//		if (!Input.compass.enabled) {
+//			degree = (int)(-Time.time * 5);
+//		}else{
+//			degree = (int)Mathf.Round(Input.compass.trueHeading);
+//		}
 		
 
-		StartCoroutine (RotateCamera(degree));
-		transform.localRotation = Quaternion.Euler (0,currentDegree,0);
-		currentDegree = -degree;
+//		StartCoroutine (RotateCamera(degree));
+		transform.rotation = Quaternion.Euler (0,(int)Mathf.Round(Input.compass.trueHeading),0);
+//		currentDegree = -degree;
 
 //		if(Input.location.status == LocationServiceStatus.Running){
 //			float x = (float)Utils.Mapf (Input.location.lastData.longitude, LEFT, RIGHT, -max, max, false);
@@ -52,9 +52,9 @@ public class CameraRotateEffect : MonoBehaviour
 
 	}
 	IEnumerator RotateCamera(float toDegree){
-		while (Mathf.Abs (currentDegree-toDegree) < 0.1) {
+		while (Mathf.Abs (currentDegree-toDegree) > 1 ) {
 			
-			currentDegree = Mathf.Lerp(currentDegree , -toDegree , 0.1f ); 
+			currentDegree = (int)Mathf.Lerp(currentDegree , -toDegree , 0.1f ); 
 
 			yield return null;
 		}

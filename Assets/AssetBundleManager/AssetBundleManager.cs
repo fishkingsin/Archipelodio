@@ -661,5 +661,10 @@ namespace AssetBundles
 
             return operation;
         }
+
+
+		static public  List<AssetBundleLoadOperation> GetInProgressOperations (){
+			return m_InProgressOperations;
+		}
     } // End of AssetBundleManager.
 }

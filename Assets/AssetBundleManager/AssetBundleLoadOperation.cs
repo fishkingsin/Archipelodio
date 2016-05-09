@@ -180,6 +180,9 @@ namespace AssetBundles
         {
             return m_Url;
         }
+		public float GetProgress(){
+			return m_WWW.progress;
+		}
     }
 
 #if UNITY_EDITOR

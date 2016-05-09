@@ -246,7 +246,7 @@ public class Main : MonoBehaviour
 
 			while (audioSource.clip != null && count < users.Count) {
 				index = (int)(UnityEngine.Random.value * keys.Length);
-				string tKey = keys [index];
+				tKey = keys [index];
 				audioSource = ((GameObject)users [tKey]).GetComponent<AudioSource> ();
 				tKey = keys [index];
 				count++;

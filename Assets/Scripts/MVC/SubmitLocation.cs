@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using System.Collections.Generic;
 
 public class SubmitLocation : MonoBehaviour
 {
@@ -60,13 +59,14 @@ public class SubmitLocation : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		latitude = Math.Round(Input.location.lastData.latitude);
-		longitude = Math.Round(Input.location.lastData.longitude);
-		altitude = Math.Round(Input.location.lastData.altitude);
-		heading = Math.Round(Input.compass.trueHeading);
+		latitude = (int)Mathf.Round (Input.location.lastData.latitude);
+		longitude = (int)Mathf.Round (Input.location.lastData.longitude);
+		altitude = (int)Mathf.Round (Input.location.lastData.altitude);
+		heading = (int)Mathf.Round (Input.compass.trueHeading);
 	}
 
-	void IntervalFunction(){
+	void IntervalFunction ()
+	{
 		StartCoroutine (sendLocation ());
 	}
 
@@ -88,7 +88,7 @@ public class SubmitLocation : MonoBehaviour
 			form.AddField ("uid", SystemInfo.deviceUniqueIdentifier);
 				#endif
 			}
-		} catch (Exception e) {
+		} catch (System.Exception e) {
 			Debug.Log ("Error :" + e);  
 		}
 		WWW www = new WWW (url, form);
@@ -107,12 +107,15 @@ public class SubmitLocation : MonoBehaviour
 
 	public override string ToString ()
 	{
-		if (Input.location.status != LocationServiceStatus.Running) {
-			return "Faile to read Location";
+		if (Input.location.status == LocationServiceStatus.Initializing) {
+			return "LocationServiceStatus.Initializing";
 		}
-		return "latitude: " + latitude +
-		"\n| longitude: " + longitude +
-		"\n| altitude: " + altitude +
-		"\n| trueHeading: " + heading;
+		if (Input.location.status == LocationServiceStatus.Failed) {
+			return "Fail to read Location";
+		}
+		return "latitude: " + Mathf.Round (Input.location.lastData.latitude) +
+		"\n| longitude: " + Mathf.Round (Input.location.lastData.longitude) +
+		"\n| altitude: " + Mathf.Round (Input.location.lastData.altitude) +
+		"\n| trueHeading: " + Mathf.Round (Input.compass.trueHeading);
 	}
 }
