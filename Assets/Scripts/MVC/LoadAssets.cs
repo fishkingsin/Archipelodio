@@ -23,6 +23,7 @@ public class LoadAssets : MonoBehaviour
     // Use this for initialization
     IEnumerator Start()
     {
+		Application.targetFrameRate = 30;
         yield return StartCoroutine(Initialize());
 
 //		WWW www = new WWW (url);
@@ -108,8 +109,8 @@ public class LoadAssets : MonoBehaviour
         // (This is very dependent on the production workflow of the project.
         //      Another approach would be to make this configurable in the standalone player.)
 
-        AssetBundleManager.SetDevelopmentAssetBundleServer();
-//		AssetBundleManager.SetSourceAssetBundleURL("http://www.mb09.com/ARCHIPELAUDIO/AssetBundles/");
+//        AssetBundleManager.SetDevelopmentAssetBundleServer();
+		AssetBundleManager.SetSourceAssetBundleURL("http://www.mb09.com/ARCHIPELAUDIO/AssetBundles/");
         return;
         #else
         // Use the following code if AssetBundles are embedded in the project for example via StreamingAssets folder etc:
@@ -141,7 +142,7 @@ public class LoadAssets : MonoBehaviour
         float startTime = Time.realtimeSinceStartup;
 
         // Load asset from assetBundle.
-
+		Debug.Log("InstantiateGameObjectAsync : assetBundleName : "+assetBundleName);
         AssetBundleLoadAssetOperation request = AssetBundleManager.LoadAssetAsync(assetBundleName, assetName, t);
         if (request == null)
             yield break;

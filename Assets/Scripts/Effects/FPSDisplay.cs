@@ -3,13 +3,15 @@ using System.Collections;
 using System;
 
 public class FPSDisplay : MonoBehaviour {
+	public  GameObject submitLocationObject;
+
 	float deltaTime = 0.0f;
 	// Use this for initialization
 	SubmitLocation submitLocationScript;
+
 	void Start(){
 		
-		GameObject submitLocation = GameObject.Find("SubmitLocation");
-		submitLocationScript  = submitLocation.GetComponent<SubmitLocation>();
+		submitLocationScript  = submitLocationObject.GetComponent<SubmitLocation>();
 	}
 	void Update()
 	{

@@ -241,12 +241,13 @@ public class Main : MonoBehaviour
 			collection.CopyTo (keys, 0);
 			int index = (int)(UnityEngine.Random.value * keys.Length);
 			int count = 0;
-
-			audioSource = ((GameObject)users [keys [index]]).GetComponent<AudioSource> ();
 			string tKey = keys [index];
+			audioSource = ((GameObject)users [tKey]).GetComponent<AudioSource> ();
+
 			while (audioSource.clip != null && count < users.Count) {
 				index = (int)(UnityEngine.Random.value * keys.Length);
-				audioSource = ((GameObject)users [keys [index]]).GetComponent<AudioSource> ();
+				string tKey = keys [index];
+				audioSource = ((GameObject)users [tKey]).GetComponent<AudioSource> ();
 				tKey = keys [index];
 				count++;
 				Debug.Log ("AudioSourceCompleted count : " + count);

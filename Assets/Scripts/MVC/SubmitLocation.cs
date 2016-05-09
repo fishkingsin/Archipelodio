@@ -11,10 +11,10 @@ public class SubmitLocation : MonoBehaviour
 	public string url = "http://www.moneme.com/Archipelodio/api/update";
 	#endif
 	// Use this for initialization
-	public double latitude;
-	public double longitude;
-	public double altitude;
-	public double heading;
+	public int latitude;
+	public int longitude;
+	public int altitude;
+	public int heading;
 
 	IEnumerator Start ()
 	{
@@ -51,10 +51,7 @@ public class SubmitLocation : MonoBehaviour
 
 
 		}
-		latitude = Input.location.lastData.latitude;
-		longitude = Input.location.lastData.longitude;
-		altitude = Input.location.lastData.altitude;
-		heading = Input.compass.trueHeading;
+
 		// Stop service if there is no need to query location updates continuously
 
 		yield return sendLocation ();
@@ -63,7 +60,10 @@ public class SubmitLocation : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		
+		latitude = Math.Round(Input.location.lastData.latitude);
+		longitude = Math.Round(Input.location.lastData.longitude);
+		altitude = Math.Round(Input.location.lastData.altitude);
+		heading = Math.Round(Input.compass.trueHeading);
 	}
 
 	void IntervalFunction(){
