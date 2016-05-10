@@ -2,18 +2,23 @@
 using System.Collections;
 using AssetBundles;
 using UnityEngine.SceneManagement;
+using ProgressBar;
+
+
 public class Loading : MonoBehaviour {
 
 	// Use this for initialization
 	public GameObject ProgressBar;
 	public GameObject loadAssetObject;
 
+	ProgressBarBehaviour BarBehaviour;
 	LoadAssets loadAsset;
 	bool canLoadScene = false;
 	void Start () {
 		loadAsset = loadAssetObject.GetComponent <LoadAssets> ();
 		loadAsset.assetLoadedDelegate += AssetLoaded;
 		loadAsset.assetDownloadProgressDelegate += AssetDownloadProgress;
+		BarBehaviour = ProgressBar.GetComponent<ProgressBarBehaviour> ();
 
 	}
 	
@@ -32,5 +37,7 @@ public class Loading : MonoBehaviour {
 
 	}
 	void AssetDownloadProgress(float progress){
+		BarBehaviour.Value = progress * 100;
 	}
+
 }
