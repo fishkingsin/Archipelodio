@@ -38,8 +38,8 @@ public class CameraRotateEffect : MonoBehaviour
 //		}
 		
 
-		StartCoroutine (RotateCamera((int)Mathf.Round(Input.compass.trueHeading)));
-//		transform.rotation = Quaternion.Euler (0,(int)Mathf.Round(Input.compass.trueHeading),0);
+//		StartCoroutine (RotateCamera((int)Mathf.Round(Input.compass.trueHeading)));
+		transform.rotation = Quaternion.Euler (0,(int)Mathf.Round(Input.compass.trueHeading),0);
 //		currentDegree = -degree;
 
 //		if(Input.location.status == LocationServiceStatus.Running){
@@ -51,16 +51,16 @@ public class CameraRotateEffect : MonoBehaviour
 //		}
 
 	}
-	IEnumerator RotateCamera(float toDegree){
-		while (Mathf.Abs (currentDegree-toDegree) > 1 ) {
-			
-			currentDegree = (int)Mathf.Lerp(currentDegree , -toDegree , 0.1f ); 
-			transform.rotation = Quaternion.Euler (0,currentDegree,0);
-
-			yield return null;
-		}
-
-	}
+//	IEnumerator RotateCamera(float toDegree){
+//		while (Mathf.Abs (currentDegree-toDegree) > 1 ) {
+//			
+//			currentDegree = (int)Mathf.Lerp(currentDegree , -toDegree , 0.1f ); 
+//			transform.rotation = Quaternion.Euler (0,currentDegree,0);
+//
+//			yield return null;
+//		}
+//
+//	}
 	public float Sum (params float[] customerssalary)
 	{
 		float result = 0;
