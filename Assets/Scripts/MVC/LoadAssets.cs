@@ -118,7 +118,7 @@ public class LoadAssets : MonoBehaviour
 
 //        AssetBundleManager.SetDevelopmentAssetBundleServer();
 //		AssetBundleManager.SetSourceAssetBundleURL ("http://www.mb09.com/ARCHIPELAUDIO/AssetBundles/");
-		AssetBundleManager.SetSourceAssetBundleURL("http://www.moneme.com/Archipelodio/AssetBundles/");
+		AssetBundleManager.SetSourceAssetBundleURL ("http://www.moneme.com/Archipelodio/AssetBundles/");
 		return;
 		#else
         // Use the following code if AssetBundles are embedded in the project for example via StreamingAssets folder etc:
@@ -147,17 +147,18 @@ public class LoadAssets : MonoBehaviour
 	{
 		float progress = 0; 
 		 
-		List<AssetBundleLoadOperation> operations = AssetBundleManager.GetInProgressOperations();
+		List<AssetBundleLoadOperation> operations = AssetBundleManager.GetInProgressOperations ();
 		float part = operations.Count;
 		foreach (AssetBundleLoadOperation operation in operations) {
 			if (operation.GetType ().Equals (typeof(AssetBundleDownloadFromWebOperation))) {
-				float downloadProgress = (AssetBundleDownloadFromWebOperation)operation).GetProgress ();
+				float downloadProgress = ((AssetBundleDownloadFromWebOperation)operation).GetProgress ();
 				Debug.Log ("operation.GetProgress () : " + downloadProgress);
-				progress += downloadProgress/part;
+				progress += downloadProgress / part;
 			}
 		}
-
-		assetDownloadProgressDelegate (progress);
+		if (assetDownloadProgressDelegate != null) {
+			assetDownloadProgressDelegate (progress);
+		}
 	}
 
 	protected IEnumerator InstantiateGameObjectAsync (string assetBundleName, string assetName, Type t)
