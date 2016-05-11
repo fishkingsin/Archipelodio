@@ -39,7 +39,11 @@ public class CameraRotateEffect : MonoBehaviour
 		
 
 //		StartCoroutine (RotateCamera((int)Mathf.Round(Input.compass.trueHeading)));
+		#if UNITY_EDITOR
+		transform.rotation = Quaternion.Euler (0, (int)Mathf.Round(Time.time*20), 0);
+		#else
 		transform.rotation = Quaternion.Euler (0,(int)Mathf.Round(Input.compass.trueHeading),0);
+		#endif
 //		currentDegree = -degree;
 
 //		if(Input.location.status == LocationServiceStatus.Running){

@@ -50,12 +50,13 @@ public class Main : MonoBehaviour
 		loadAsset = loadAssetObject.GetComponent <LoadAssets> ();
 		loadAsset.assetLoadedDelegate += AssetLoaded;
 		dialogAudioSourceRef = null;
+//		InvokeRepeating ("fireDialogInterval", 1.0f, 1.0f);
 	}
 
 	void UserDead (string uid)
 	{
 		try {
-//		Component[] componenets = obj.GetComponents<Component> ();
+
 			GameObject gameObject = (GameObject)users [uid];
 			if (gameObject) {
 				Debug.Log ("UserDead " + gameObject.ToString () + " of uid " + uid);
@@ -64,9 +65,8 @@ public class Main : MonoBehaviour
 					if (audioSource.Equals (dialogAudioSourceRef)) {
 						dialogAudioSourceRef = null;
 					}
-//				StartCoroutine (AudioFadeOut.FadeOut (audioSource, 0.5f));
+				
 				}
-
 
 				if (gameObject.GetComponent<User> ()) {
 					Destroy (gameObject.GetComponent<User> (), 0.0f);
@@ -81,11 +81,19 @@ public class Main : MonoBehaviour
 				audioSources.Remove (uid);
 				Destroy (gameObject, 0.0f);
 				users.Remove (uid);
-//			AudioSourceCompleted (uid);
 			}
 		} catch (Exception e) {
 			Debug.Log ("UserDead Exception " + e);
 		}
+	}
+	void fireDialogInterval (){
+		StartCoroutine (fireDialog());
+	}
+	IEnumerator fireDialog ()
+	{
+		yield return new WaitForSeconds (1.0f);
+		Debug.Log ("fireDialog");
+
 	}
 
 	void Update ()
@@ -165,8 +173,9 @@ public class Main : MonoBehaviour
 		try {
 			if (dialogAudioSourceRef == null && dialogs.Count > 0) {
 				Debug.Log ("AssignAudioClip : " + audioSource);
-				ShuffleDialog ();
+
 				audioSource.clip = GetAudioClip (audioSource);
+				Debug.Log ("dialogAudioSource Clip : " + audioSource.clip.ToString ());
 				audioSource.Play ();
 				audioSource.volume = 0.0f;
 				dialogAudioSourceRef = audioSource;
@@ -208,9 +217,11 @@ public class Main : MonoBehaviour
 			}
 			AudioClip dialogAudioClip = null;
 			if (dialogsQueue.Count != 0) {
-				dialogAudioClip = dialogsQueue.Peek ();
+				
+				dialogAudioClip = dialogsQueue.Dequeue ();
 
-//				Debug.Log ("Got dailog clip " + dialogAudioClip.ToString ());
+				Debug.Log ("Got dailog clip " + dialogAudioClip.ToString ());
+
 			}
 			return dialogAudioClip;
 		} else {
@@ -224,35 +235,40 @@ public class Main : MonoBehaviour
 		}
 	}
 
-	void AudioSourceCompleted (string uid)
+	void AudioSourceCompleted (AudioSource audioSource, string uid)
 	{
 		try {
 			//TODO more implementation here
-			AudioSource audioSource = (AudioSource)audioSources [uid];
+			AudioSource audioSource_ = (AudioSource)audioSources [uid];
 			if (audioSource != null) {
+				audioSource.Stop ();
 				audioSource.clip = null;
 				if (audioSource.Equals (dialogAudioSourceRef)) {
 					dialogAudioSourceRef = null;
 				}
 				audioSources.Remove (uid);
 			}
-			ICollection collection = users.Keys;
-			string[] keys = new string[collection.Count];
-			collection.CopyTo (keys, 0);
-			int index = (int)(UnityEngine.Random.value * keys.Length);
-			int count = 0;
-			string tKey = keys [index];
-			audioSource = ((GameObject)users [tKey]).GetComponent<AudioSource> ();
-
-			while (audioSource.clip != null && count < users.Count) {
-				index = (int)(UnityEngine.Random.value * keys.Length);
-				tKey = keys [index];
-				audioSource = ((GameObject)users [tKey]).GetComponent<AudioSource> ();
-				tKey = keys [index];
-				count++;
-				Debug.Log ("AudioSourceCompleted count : " + count);
+			if (audioSource_ != null) {
+				audioSource_.Stop ();
+				audioSource_.clip = null;
 			}
-			AssignAudioClip (ref audioSource, uid);
+//			ICollection collection = users.Keys;
+//			string[] keys = new string[collection.Count];
+//			collection.CopyTo (keys, 0);
+//			int index = (int)(UnityEngine.Random.value * keys.Length);
+//			int count = 0;
+//			string tKey = keys [index];
+//			audioSource = ((GameObject)users [tKey]).GetComponent<AudioSource> ();
+//
+//			while (audioSource.clip != null && count < users.Count) {
+//				index = (int)(UnityEngine.Random.value * keys.Length);
+//				tKey = keys [index];
+//				audioSource = ((GameObject)users [tKey]).GetComponent<AudioSource> ();
+//				tKey = keys [index];
+//				count++;
+//				Debug.Log ("AudioSourceCompleted count : " + count);
+//			}
+//			AssignAudioClip (ref audioSource, uid);
 
 		} catch (Exception exception) {
 			Debug.Log ("AudioSourceCompleted exception : " + exception.ToString ());

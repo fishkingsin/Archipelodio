@@ -57,20 +57,21 @@ public class GetUsers : MonoBehaviour
 	{
 		switch (obj.type) {
 		case JSONObject.Type.OBJECT:
-			Debug.Log ("lid:" + obj ["lid"].str +
-			"| uid: " + obj ["uid"].str +
-			"| loclat: " + obj ["loclat"].str +
-			"| loclong: " + obj ["loclong"].str +
-			"| heading: " + obj ["heading"].str +
-			"| altitude: " + obj ["altitude"].str +
-			"| timestamp: " + obj ["timestamp"].str +
-			"| tester: " + obj ["tester"].str);
+//			Debug.Log ("lid:" + obj ["lid"].str +
+//			"| uid: " + obj ["uid"].str +
+//			"| loclat: " + obj ["loclat"].str +
+//			"| loclong: " + obj ["loclong"].str +
+//			"| heading: " + obj ["heading"].str +
+//			"| altitude: " + obj ["altitude"].str +
+//			"| timestamp: " + obj ["timestamp"].str +
+//			"| tester: " + obj ["tester"].str);
 			float loclong,loclat,altitude;
 			float.TryParse (obj ["loclong"].str, out loclong); 
 			float.TryParse(obj ["loclat"].str, out loclat);
 			float.TryParse(obj ["altitude"].str, out altitude);
 			try{
-			fetchedUserDelegate (obj ["uid"].str, 
+				string uid = obj ["uid"].str;
+			fetchedUserDelegate (uid, 
 				loclong,
 				loclat,
 				altitude

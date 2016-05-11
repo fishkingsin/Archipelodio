@@ -10,7 +10,7 @@ public class DottedLineDrawer : MonoBehaviour {
 	GameObject[] dot3;
 
 	public int numObjects=100;
-	public float _scale = -0.1f ;
+	public float _scale = 0.01f ;
 	void Start () {
 		dot1 = new GameObject[numObjects];
 		dot2 = new GameObject[numObjects];
