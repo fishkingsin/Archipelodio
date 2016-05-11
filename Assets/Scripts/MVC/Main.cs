@@ -25,7 +25,7 @@ public class Main : MonoBehaviour
 	public GameObject loadAssetObject;
 	private bool isShowing;
 	public int numObjects = 10;
-
+	public GameObject dicoCircle;
 	float max = 5.0f;
 
 	GetUsers getUser;
@@ -86,9 +86,12 @@ public class Main : MonoBehaviour
 			Debug.Log ("UserDead Exception " + e);
 		}
 	}
-	void fireDialogInterval (){
-		StartCoroutine (fireDialog());
+
+	void fireDialogInterval ()
+	{
+		StartCoroutine (fireDialog ());
 	}
+
 	IEnumerator fireDialog ()
 	{
 		yield return new WaitForSeconds (1.0f);
@@ -101,6 +104,12 @@ public class Main : MonoBehaviour
 		if (Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Ended) {
 			isShowing = !isShowing;
 			canvas.SetActive (isShowing);
+		}
+		if (Input.location.status == LocationServiceStatus.Running) {
+			float x = (float)Utils.Mapf (Mathf.Round (Input.location.lastData.longitude), LEFT, RIGHT, -max, max, false);
+			float y = (float)Utils.Mapf (Mathf.Round (Input.location.lastData.altitude), 0, 10, 0.0f, max, true);
+			float z = (float)Utils.Mapf (Mathf.Round (Input.location.lastData.latitude), TOP, BOTTOM, -max, max, true);
+			dicoCircle.transform.position = new Vector3 (x, y, z);
 		}
 	}
 
@@ -157,7 +166,7 @@ public class Main : MonoBehaviour
 					}
 				}
 				
-			} 
+			}
 		} catch (Exception exception) {
 			Debug.Log ("UserFetched : " + exception.ToString ());
 		}

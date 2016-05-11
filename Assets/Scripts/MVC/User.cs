@@ -76,7 +76,7 @@ public class User : MonoBehaviour
 			if (centerRef) {
 
 
-				float dist = Math.Abs (Vector3.Distance (transform.position, centerRef.transform.position));
+				float dist = Math.Max(0.1f,Math.Min (5.0f,Math.Abs (Vector3.Distance (transform.position, centerRef.transform.position))));
 
 				transform.localScale = mScale * Utils.Map (dist, 0.0f, 5.0f, mScale.x * 0.5f, mScale.x);
 
@@ -84,7 +84,7 @@ public class User : MonoBehaviour
 				SpriteRenderer renderer = GetComponents<SpriteRenderer> () [0];
 				renderer.color = HSBColor.ToColor (
 					new HSBColor (
-						Utils.Map (dist, 0.0f, 5, 0.60833333333333f, 0.51388888888889f),
+						Utils.Map (Mathf.Min(dist,5), 0.0f, 5, 0.60833333333333f, 0.51388888888889f),
 						Utils.Map (dist, 10.0f, 0.0f, 0.61F, 0.85f),
 						1.0f,
 						1f)); 

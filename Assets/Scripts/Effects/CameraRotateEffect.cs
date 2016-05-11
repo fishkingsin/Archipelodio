@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 public class CameraRotateEffect : MonoBehaviour
 {
 	//top left: (gps format is 22.60,113.82)
+	public GameObject dicoCircle;
 	public static float TOP = 22.60f;
 	public static float LEFT = 113.82f;
 
@@ -22,9 +23,11 @@ public class CameraRotateEffect : MonoBehaviour
 
 	private int currentDegree;
 	private int diff;
+
 	void Start ()
 	{
 		currentDegree = 0;
+
 	}
 	
 	// Update is called once per frame
@@ -53,6 +56,7 @@ public class CameraRotateEffect : MonoBehaviour
 //			Debug.Log ( " | x: " + x + " | y: " + y + " | z: " + z);
 //			transform.position = new Vector3 (x, y, z);
 //		}
+		transform.localPosition = dicoCircle.transform.position;
 
 	}
 //	IEnumerator RotateCamera(float toDegree){
