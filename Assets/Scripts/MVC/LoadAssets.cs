@@ -9,7 +9,7 @@ using System.Collections.Generic;
 public class LoadAssets : MonoBehaviour
 {
 	public const string AssetBundlesOutputPath = "/AssetBundles/";
-	public string assetBundleName;
+	public List<string> assetBundleName;
 	public List<string> assetNames;
 
 	public delegate void AssetLoadedDelegate (string assetBundleName);
@@ -19,6 +19,12 @@ public class LoadAssets : MonoBehaviour
 	public delegate void AssetDownloadProgressDelegate (float progress);
 
 	public AssetDownloadProgressDelegate assetDownloadProgressDelegate;
+
+
+	public delegate void AssetLoadErrorDelegate (string err);
+
+	public AssetLoadErrorDelegate assetLoadErrorDelegate;
+
 
 	#if UNITY_EDITOR || DEVELOPMENT_BUILD
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/assetBundle";
@@ -48,8 +54,8 @@ public class LoadAssets : MonoBehaviour
 		// Load asset.
 		assetNames = new List<string> ();
 		assetNames.Add ("sample");
-		for (int i = 0; i < assetNames.Count; i++) {
-			yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName, assetNames [i], typeof(AudioClip)));
+		for (int i = 0; i < assetBundleName.Count; i++) {
+			yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName[i], "sample", typeof(AudioClip)));
 		}
 	}
 
@@ -176,9 +182,16 @@ public class LoadAssets : MonoBehaviour
 		// Get the asset.
 		GameObject prefab = request.GetAsset<GameObject> ();
 //		if (prefab != null)
-
-		if (assetLoadedDelegate != null) {
-			assetLoadedDelegate (assetBundleName);
+		string error;
+		AssetBundleManager.GetLoadedAssetBundle (assetBundleName, out error);
+		if (error == null) {
+			if (assetLoadedDelegate != null) {
+				assetLoadedDelegate (assetBundleName);
+			}
+		} else {
+			if (assetLoadErrorDelegate != null) {
+				assetLoadErrorDelegate (error);
+			}
 		}
         
 		// Calculate and display the elapsed time.

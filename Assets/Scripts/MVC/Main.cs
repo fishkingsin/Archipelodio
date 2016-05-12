@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using AssemblyCSharp;
 using AssetBundles;
+using System.Runtime.InteropServices;
 
 public class Main : MonoBehaviour
 {
@@ -112,7 +113,7 @@ public class Main : MonoBehaviour
 			float x = (float)Utils.Mapf (Limit (lastData.longitude, LEFT, RIGHT), LEFT, RIGHT, -max, max, false);
 			float y = (float)Utils.Mapf (Limit (lastData.altitude, 0, 900), 0, 900, 0.0f, max, true);
 			float z = (float)Utils.Mapf (Limit (lastData.latitude, TOP, BOTTOM), TOP, BOTTOM, -max, max, true);
-			dicoCircle.transform.position = new Vector3 (x, y, z);
+			dicoCircle.transform.position =  Vector3.Lerp(dicoCircle.transform.position, new Vector3 (x, y, z) , 0.5f);
 		}
 	}
 

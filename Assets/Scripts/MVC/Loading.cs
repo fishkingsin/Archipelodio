@@ -18,6 +18,7 @@ public class Loading : MonoBehaviour {
 		loadAsset = loadAssetObject.GetComponent <LoadAssets> ();
 		loadAsset.assetLoadedDelegate += AssetLoaded;
 		loadAsset.assetDownloadProgressDelegate += AssetDownloadProgress;
+		loadAsset.assetLoadErrorDelegate += AssetLoadError;
 		BarBehaviour = ProgressBar.GetComponent<ProgressBarBehaviour> ();
 
 	}
@@ -36,6 +37,13 @@ public class Loading : MonoBehaviour {
 		canLoadScene = true;
 
 	}
+	void AssetLoadError (string error)
+	{
+		Debug.Log ("AssetLoadError " + error);
+		SceneManager.LoadScene ("Retry");
+
+	}
+
 	void AssetDownloadProgress(float progress){
 		BarBehaviour.Value = progress * 100;
 	}
