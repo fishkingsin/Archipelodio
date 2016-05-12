@@ -36,9 +36,11 @@ public class Main : MonoBehaviour
 	Queue<AudioClip> dialogsQueue;
 	AudioSource dialogAudioSourceRef;
 
+	LocationInfo lastData;
 
 	void Start ()
 	{
+		
 		soundfields = new List<AudioClip> ();	
 		dialogs = new List<AudioClip> ();	
 		users = new Hashtable ();
@@ -106,9 +108,10 @@ public class Main : MonoBehaviour
 			canvas.SetActive (isShowing);
 		}
 		if (Input.location.status == LocationServiceStatus.Running) {
-			float x = (float)Utils.Mapf (Mathf.Round (Input.location.lastData.longitude), LEFT, RIGHT, -max, max, false);
-			float y = (float)Utils.Mapf (Mathf.Round (Input.location.lastData.altitude), 0, 10, 0.0f, max, true);
-			float z = (float)Utils.Mapf (Mathf.Round (Input.location.lastData.latitude), TOP, BOTTOM, -max, max, true);
+			lastData = Input.location.lastData;
+			float x = (float)Utils.Mapf (Limit (lastData.longitude, LEFT, RIGHT), LEFT, RIGHT, -max, max, false);
+			float y = (float)Utils.Mapf (Limit (lastData.altitude, 0, 900), 0, 900, 0.0f, max, true);
+			float z = (float)Utils.Mapf (Limit (lastData.latitude, TOP, BOTTOM), TOP, BOTTOM, -max, max, true);
 			dicoCircle.transform.position = new Vector3 (x, y, z);
 		}
 	}
@@ -338,6 +341,9 @@ public class Main : MonoBehaviour
 			Debug.Log ("[Main] " + text);
 	}
 
-
+	float Limit (float i, float minVal, float maxVal)
+	{
+		return Math.Max (minVal, Math.Min (maxVal, i));
+	}
 
 }

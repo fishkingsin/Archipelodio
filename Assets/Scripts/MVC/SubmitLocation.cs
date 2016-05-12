@@ -10,9 +10,9 @@ public class SubmitLocation : MonoBehaviour
 	public string url = "http://www.moneme.com/Archipelodio/api/update";
 	#endif
 	// Use this for initialization
-	public int latitude;
-	public int longitude;
-	public int altitude;
+	public double latitude;
+	public double longitude;
+	public double altitude;
 	public int heading;
 
 	IEnumerator Start ()
@@ -59,9 +59,9 @@ public class SubmitLocation : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		latitude = (int)Mathf.Round (Input.location.lastData.latitude);
-		longitude = (int)Mathf.Round (Input.location.lastData.longitude);
-		altitude = (int)Mathf.Round (Input.location.lastData.altitude);
+		latitude = Input.location.lastData.latitude;
+		longitude = Input.location.lastData.longitude;
+		altitude = Input.location.lastData.altitude;
 		heading = (int)Mathf.Round (Input.compass.trueHeading);
 	}
 
@@ -113,9 +113,9 @@ public class SubmitLocation : MonoBehaviour
 		if (Input.location.status == LocationServiceStatus.Failed) {
 			return "Fail to read Location";
 		}
-		return "latitude: " + Mathf.Round (Input.location.lastData.latitude) +
-		"\n| longitude: " + Mathf.Round (Input.location.lastData.longitude) +
-		"\n| altitude: " + Mathf.Round (Input.location.lastData.altitude) +
-		"\n| trueHeading: " + Mathf.Round (Input.compass.trueHeading);
+		return "latitude: " + latitude +
+		"\n| longitude: " + longitude +
+		"\n| altitude: " + altitude +
+		"\n| trueHeading: " + heading;
 	}
 }

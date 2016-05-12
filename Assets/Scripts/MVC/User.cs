@@ -38,8 +38,10 @@ public class User : MonoBehaviour
 		audioSource.loop = false;
 
 	}
-	IEnumerator UserIsDying(){
-		yield return new WaitForSeconds(2);
+
+	IEnumerator UserIsDying ()
+	{
+		yield return new WaitForSeconds (2);
 		userDeadDelegate (uid);
 	}
 	// Update is called once per frame
@@ -49,7 +51,7 @@ public class User : MonoBehaviour
 			if (userDeadDelegate != null) {
 				
 				StartCoroutine (AudioFadeOut.FadeOut (audioSource, 1.0f));
-				StartCoroutine ( UserIsDying () );
+				StartCoroutine (UserIsDying ());
 
 
 				userDeadDelegate = null;
@@ -58,17 +60,17 @@ public class User : MonoBehaviour
 			age -= 1;
 			float s = Mathf.Min (age, 100.0f) / 100.0f;
 
-			transform.localScale = mScale * Utils.Map ( s , 0.0f, 1.0f, 0.1f, 1.0f);
+			transform.localScale = mScale * Utils.Map (s, 0.0f, 1.0f, 0.1f, 1.0f);
 
 			if (audioSource != null) {
 
 				if (!audioSource.isPlaying && audioSource.clip != null) {
 					audioSource.volume = s;
-					if (getClipDelegate != null) {
-						if (audioSourceCompleted != null) {
-							audioSourceCompleted (audioSource,uid);
-						}
+
+					if (audioSourceCompleted != null) {
+						audioSourceCompleted (audioSource, uid);
 					}
+
 				}
 
 
@@ -76,7 +78,7 @@ public class User : MonoBehaviour
 			if (centerRef) {
 
 
-				float dist = Math.Max(0.1f,Math.Min (5.0f,Math.Abs (Vector3.Distance (transform.position, centerRef.transform.position))));
+				float dist = Math.Max (0.1f, Math.Min (5.0f, Math.Abs (Vector3.Distance (transform.position, centerRef.transform.position))));
 
 				transform.localScale = mScale * Utils.Map (dist, 0.0f, 5.0f, mScale.x * 0.5f, mScale.x);
 
@@ -84,7 +86,7 @@ public class User : MonoBehaviour
 				SpriteRenderer renderer = GetComponents<SpriteRenderer> () [0];
 				renderer.color = HSBColor.ToColor (
 					new HSBColor (
-						Utils.Map (Mathf.Min(dist,5), 0.0f, 5, 0.60833333333333f, 0.51388888888889f),
+						Utils.Map (Mathf.Min (dist, 5), 0.0f, 5, 0.60833333333333f, 0.51388888888889f),
 						Utils.Map (dist, 10.0f, 0.0f, 0.61F, 0.85f),
 						1.0f,
 						1f)); 

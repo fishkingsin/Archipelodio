@@ -593,7 +593,7 @@ namespace AssetBundles
 					Debug.Log ("assetPath : " + assetPath);
 				}
 				if (assetPaths.Length == 0) {
-					Debug.LogError ("There is no asset with name \"" + assetName + "\" in " + assetBundleName);
+					Debug.Log ("There is no asset with name \"" + assetName + "\" in " + assetBundleName);
 					return null;
 				}
 
