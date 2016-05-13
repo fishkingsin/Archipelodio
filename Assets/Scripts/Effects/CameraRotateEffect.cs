@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using AssemblyCSharp;
 using System.IO;
 using System.Runtime.InteropServices;
+using UnityEngine.EventSystems;
 
 
 
@@ -45,7 +46,13 @@ public class CameraRotateEffect : MonoBehaviour
 		#if UNITY_EDITOR
 		transform.rotation = Quaternion.Euler (0, (int)Mathf.Round(Time.time*20), 0);
 		#else
-		transform.rotation = Quaternion.Euler (0,(int)Mathf.Round(Input.compass.trueHeading),0);
+		int newDegree = -(int)Mathf.Round(Input.compass.trueHeading);
+		if(Mathf.Abs(newDegree-currentDegree)<5){
+		currentDegree = (int)Mathf.Lerp (currentDegree, newDegree, 0.2f);
+		}else{
+			currentDegree = newDegree;
+		}
+		transform.rotation = Quaternion.Euler (0,currentDegree,0);
 		#endif
 //		currentDegree = -degree;
 

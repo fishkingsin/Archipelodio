@@ -49,7 +49,7 @@ public class Main : MonoBehaviour
 		dialogsQueue = new Queue<AudioClip> ();
 		getUser = getUserObject.GetComponent<GetUsers> ();
 		getUser.fetchedUserDelegate += UserFetched;
-
+		loadAssetObject = GameObject.Find("Load");
 		loadAsset = loadAssetObject.GetComponent <LoadAssets> ();
 		loadAsset.assetLoadedDelegate += AssetLoaded;
 		dialogAudioSourceRef = null;
@@ -113,7 +113,7 @@ public class Main : MonoBehaviour
 			float x = (float)Utils.Mapf (Limit (lastData.longitude, LEFT, RIGHT), LEFT, RIGHT, -max, max, false);
 			float y = (float)Utils.Mapf (Limit (lastData.altitude, 0, 900), 0, 900, 0.0f, max, true);
 			float z = (float)Utils.Mapf (Limit (lastData.latitude, TOP, BOTTOM), TOP, BOTTOM, -max, max, true);
-			dicoCircle.transform.position =  Vector3.Lerp(dicoCircle.transform.position, new Vector3 (x, y, z) , 0.5f);
+			dicoCircle.transform.position = Vector3.Lerp (dicoCircle.transform.position, new Vector3 (x, y, z), 0.5f);
 		}
 	}
 
@@ -201,15 +201,17 @@ public class Main : MonoBehaviour
 			} else if (soundfields.Count > 0) {
 				Debug.Log ("AssignAudioClip : " + audioSource);
 				try {
-					int index = (int)(UnityEngine.Random.value * soundfields.Count);
-					AudioClip audioClip = soundfields [index];
-					audioSource.clip = audioClip;
-					audioSource.Play ();
-					audioSource.volume = 0.0f;
-					StartCoroutine (AudioFadeOut.FadeIn (audioSource, 1.0f));
-					Debug.Log ("audioSources.Add  " + uid);
-					audioSources.Add (uid, audioSource);
-					Debug.Log ("AssignAudioClip : " + audioSource.clip);
+					if (audioSources.Count < 10) {
+						int index = (int)(UnityEngine.Random.value * soundfields.Count);
+						AudioClip audioClip = soundfields [index];
+						audioSource.clip = audioClip;
+						audioSource.Play ();
+						audioSource.volume = 0.0f;
+						StartCoroutine (AudioFadeOut.FadeIn (audioSource, 1.0f));
+						Debug.Log ("audioSources.Add  " + uid);
+						audioSources.Add (uid, audioSource);
+						Debug.Log ("AssignAudioClip : " + audioSource.clip);
+					}
 				} catch (Exception exception) {
 					Debug.Log ("AssignAudioClip : " + exception.Message);
 				}

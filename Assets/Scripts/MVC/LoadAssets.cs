@@ -29,7 +29,7 @@ public class LoadAssets : MonoBehaviour
 	#if UNITY_EDITOR || DEVELOPMENT_BUILD
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/assetBundle";
 	#else
-	public string url = "http://www.moneme.com/Archipelodio/api/api/assetBundle";
+	public string url = "http://www.moneme.com/Archipelodio/api/assetBundle";
 	#endif
 
 	// Use this for initialization
@@ -54,6 +54,7 @@ public class LoadAssets : MonoBehaviour
 		// Load asset.
 		assetNames = new List<string> ();
 		assetNames.Add ("sample");
+
 		for (int i = 0; i < assetBundleName.Count; i++) {
 			yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName[i], "sample", typeof(AudioClip)));
 		}
@@ -123,13 +124,14 @@ public class LoadAssets : MonoBehaviour
 		//      Another approach would be to make this configurable in the standalone player.)
 
 //        AssetBundleManager.SetDevelopmentAssetBundleServer();
-//		AssetBundleManager.SetSourceAssetBundleURL ("http://www.mb09.com/ARCHIPELAUDIO/AssetBundles/");
-		AssetBundleManager.SetSourceAssetBundleURL ("http://www.moneme.com/Archipelodio/AssetBundles/");
+		AssetBundleManager.SetSourceAssetBundleURL ("http://www.mb09.com/ARCHIPELAUDIO/AssetBundles/");
+
 		return;
 		#else
         // Use the following code if AssetBundles are embedded in the project for example via StreamingAssets folder etc:
         //AssetBundleManager.SetSourceAssetBundleURL(Application.dataPath + "/");
         // Or customize the URL based on your deployment or configuration
+
 		AssetBundleManager.SetSourceAssetBundleURL("http://www.moneme.com/Archipelodio/AssetBundles/");
         return;
 		#endif

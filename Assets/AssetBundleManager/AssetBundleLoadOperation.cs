@@ -349,7 +349,7 @@ namespace AssetBundles
             // m_DownloadingError might come from the dependency downloading.
             if (m_Request == null && m_DownloadingError != null)
             {
-                Debug.LogError(m_DownloadingError);
+                Debug.LogWarning(m_DownloadingError);
                 return true;
             }
 

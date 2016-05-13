@@ -22,6 +22,7 @@ public class User : MonoBehaviour
 	public int maxAge;
 	public int age;
 	public string uid;
+	public int weight;
 
 	public GameObject centerRef;
 
@@ -63,14 +64,19 @@ public class User : MonoBehaviour
 			transform.localScale = mScale * Utils.Map (s, 0.0f, 1.0f, 0.1f, 1.0f);
 
 			if (audioSource != null) {
-
-				if (!audioSource.isPlaying && audioSource.clip != null) {
+				if (audioSource.isPlaying) {
+					weight = 0;
+				} else if (!audioSource.isPlaying && audioSource.clip != null) {
 					audioSource.volume = s;
 
 					if (audioSourceCompleted != null) {
+						
 						audioSourceCompleted (audioSource, uid);
+
 					}
 
+				} else {
+					weight++;
 				}
 
 
