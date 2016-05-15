@@ -52,6 +52,7 @@ public class Main : MonoBehaviour
 		loadAssetObject = GameObject.Find("Load");
 		loadAsset = loadAssetObject.GetComponent <LoadAssets> ();
 		loadAsset.assetLoadedDelegate += AssetLoaded;
+		StartCoroutine (loadAsset.reload ());
 		dialogAudioSourceRef = null;
 //		InvokeRepeating ("fireDialogInterval", 1.0f, 1.0f);
 	}
@@ -101,7 +102,14 @@ public class Main : MonoBehaviour
 		Debug.Log ("fireDialog");
 
 	}
+	public class myMonsterSorter : IComparer  {
 
+		// Calls CaseInsensitiveComparer.Compare on the monster name string.
+		int IComparer.Compare( System.Object x, System.Object y )  {
+			return( (new CaseInsensitiveComparer()).Compare( ((GameObject)x).name, ((GameObject)y).name) );
+		}
+
+	}
 	void Update ()
 	{
 		if (Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Ended) {
@@ -253,26 +261,32 @@ public class Main : MonoBehaviour
 	void AudioSourceCompleted (AudioSource audioSource, string uid)
 	{
 		try {
+			AudioSource tempDialogAudioSourceRef = null;
+
 			//TODO more implementation here
 			AudioSource audioSource_ = (AudioSource)audioSources [uid];
 			if (audioSource != null) {
 				audioSource.Stop ();
-				audioSource.clip = null;
+
 				if (audioSource.Equals (dialogAudioSourceRef)) {
+					tempDialogAudioSourceRef = dialogAudioSourceRef;
 					dialogAudioSourceRef = null;
 				}
+				audioSource.clip = null;
 				audioSources.Remove (uid);
 			}
 			if (audioSource_ != null) {
 				audioSource_.Stop ();
 				audioSource_.clip = null;
 			}
-//			ICollection collection = users.Keys;
-//			string[] keys = new string[collection.Count];
-//			collection.CopyTo (keys, 0);
-//			int index = (int)(UnityEngine.Random.value * keys.Length);
-//			int count = 0;
-//			string tKey = keys [index];
+
+
+//			User []tempArray = new User[users.Count];
+//			ICollection keys = users.Keys;
+
+//			users.CopyTo (tempArray,0);
+//			Array.Sort(tempArray, CompareCondition);
+
 //			audioSource = ((GameObject)users [tKey]).GetComponent<AudioSource> ();
 //
 //			while (audioSource.clip != null && count < users.Count) {
@@ -289,6 +303,15 @@ public class Main : MonoBehaviour
 			Debug.Log ("AudioSourceCompleted exception : " + exception.ToString ());
 		}
 	}
+
+//	int CompareCondition(GameObject itemA, GameObject itemB){
+//		User scriptA = itemA.GetComponent(User);
+//		User scriptB = itemB.GetComponent(User);
+//		if (scriptA.weight > scriptB.weight) return 1;
+//		if (scriptA.weight < scriptB.weight) return -1;
+//		return 0;
+//	}
+
 
 	void AssetLoaded (string assetBundleName)
 	{
@@ -348,5 +371,9 @@ public class Main : MonoBehaviour
 	{
 		return Math.Max (minVal, Math.Min (maxVal, i));
 	}
+
+	private static User SortByWeight(User o1, User o2) {
+		return (o1.weight > o2.weight)?o1:o2;
+	} 
 
 }

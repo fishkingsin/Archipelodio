@@ -18,7 +18,7 @@ public class Loading : MonoBehaviour {
 		loadAsset = loadAssetObject.GetComponent <LoadAssets> ();
 		loadAsset.assetLoadedDelegate += AssetLoaded;
 		loadAsset.assetDownloadProgressDelegate += AssetDownloadProgress;
-		loadAsset.assetLoadErrorDelegate += AssetLoadError;
+		loadAsset.assetLoadedErrorDelegate += AssetLoadError;
 		BarBehaviour = ProgressBar.GetComponent<ProgressBarBehaviour> ();
 
 	}
