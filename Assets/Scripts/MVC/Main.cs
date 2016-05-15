@@ -125,7 +125,7 @@ public class Main : MonoBehaviour
 		}
 	}
 
-	void UserFetched (string uid, float longitude, float latitude, float altutide)
+	void UserFetched (string uid, double longitude, double latitude, double altutide)
 	{
 		try {
 			#if UNITY_EDITOR
@@ -140,9 +140,9 @@ public class Main : MonoBehaviour
 					try {
 						GameObject e = (GameObject)Instantiate (user);
 						//map lat lonig alt to 3d 
-						float x = (float)Utils.Mapf (longitude, LEFT, RIGHT, -max, max, false);
-						float y = (float)Utils.Mapf (altutide, 0, 100, 0.0f, max, true);
-						float z = (float)Utils.Mapf (latitude, TOP, BOTTOM, -max, max, true);
+						float x = (float)Utils.Map (longitude, LEFT, RIGHT, -max, max, false);
+						float y = (float)Utils.Map (altutide, 0, 100, 0.0f, max, true);
+						float z = (float)Utils.Map (latitude, TOP, BOTTOM, -max, max, true);
 //						Log (LogType.Log, "uid :" + uid + " | x: " + x + " | y: " + y + " | z: " + z);
 						e.transform.position = new Vector3 (x, y, z);
 						e.transform.localScale = new Vector3 (-0.5f, -0.5f, -0.5f);

@@ -8,11 +8,27 @@ namespace AssemblyCSharp
 	[System.Serializable]
 	public struct Utils
 	{
-		static public float Map(float x, float in_min, float in_max, float out_min, float out_max)
-		{
-			return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+		static public double Map(double value, double inputMin, double inputMax, double outputMin, double outputMax, bool clamp) {
+
+			//			if (Math.Abs(inputMin - inputMax) < 1.19209290E-07F){
+			//				return outputMin;
+			//			} else {
+			double outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+
+			if( clamp ){
+				if(outputMax < outputMin){
+					if( outVal < outputMax )outVal = outputMax;
+					else if( outVal > outputMin )outVal = outputMin;
+				}else{
+					if( outVal > outputMax )outVal = outputMax;
+					else if( outVal < outputMin )outVal = outputMin;
+				}
+			}
+			return outVal;
+			//			}
+
 		}
-		static public double Mapf(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
+		static public float Mapf(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
 
 //			if (Math.Abs(inputMin - inputMax) < 1.19209290E-07F){
 //				return outputMin;

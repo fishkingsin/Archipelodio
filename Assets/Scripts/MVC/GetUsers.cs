@@ -11,7 +11,7 @@ public class GetUsers : MonoBehaviour
 	public string url = "http://www.moneme.com/Archipelodio/api/api/users";
 	#endif
 	// Use this for initialization
-	public delegate void FetchedUserDelegate(string a, float b, float c, float d);
+	public delegate void FetchedUserDelegate(string a, double b, double c, double d);
 	public FetchedUserDelegate fetchedUserDelegate;
 	IEnumerator Start ()
 	{
@@ -65,10 +65,10 @@ public class GetUsers : MonoBehaviour
 //			"| altitude: " + obj ["altitude"].str +
 //			"| timestamp: " + obj ["timestamp"].str +
 //			"| tester: " + obj ["tester"].str);
-			float loclong,loclat,altitude;
-			float.TryParse (obj ["loclong"].str, out loclong); 
-			float.TryParse(obj ["loclat"].str, out loclat);
-			float.TryParse(obj ["altitude"].str, out altitude);
+			double loclong,loclat,altitude;
+			double.TryParse (obj ["loclong"].str, out loclong); 
+			double.TryParse(obj ["loclat"].str, out loclat);
+			double.TryParse(obj ["altitude"].str, out altitude);
 			try{
 				string uid = obj ["uid"].str;
 			fetchedUserDelegate (uid, 

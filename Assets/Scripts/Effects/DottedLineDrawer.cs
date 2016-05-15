@@ -25,7 +25,7 @@ public class DottedLineDrawer : MonoBehaviour {
 			SpriteRenderer renderer = e.GetComponents<SpriteRenderer>()[0];
 			renderer.color = HSBColor.ToColor(
 				new HSBColor(
-					Utils.Map(150.0f,0.0f,256.0f,0.0f,1.0f),
+					(float)Utils.Map(150.0,0.0,256.0f,0.0,1.0,true),
 					1.0f,
 					1.0f,
 					1f)); 
@@ -41,7 +41,7 @@ public class DottedLineDrawer : MonoBehaviour {
 			SpriteRenderer renderer = e.GetComponents<SpriteRenderer>()[0];
 			renderer.color = HSBColor.ToColor(
 				new HSBColor(
-					Utils.Map(150.0f,0.0f,256.0f,0.0f,1.0f),
+					(float)Utils.Map(150.0f,0.0f,256.0f,0.0f,1.0f,true),
 					1.0f,
 					1.0f,
 					1f)); 
@@ -60,7 +60,7 @@ public class DottedLineDrawer : MonoBehaviour {
 			SpriteRenderer renderer = e.GetComponents<SpriteRenderer>()[0];
 			renderer.color = HSBColor.ToColor(
 				new HSBColor(
-					Utils.Map(150.0f,0.0f,256.0f,0.0f,1.0f),
+					(float)Utils.Map(150.0f,0.0f,256.0f,0.0f,1.0f, true),
 					1.0f,
 					1.0f,
 					1f)); 
