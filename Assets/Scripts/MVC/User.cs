@@ -23,6 +23,7 @@ public class User : MonoBehaviour
 	public int age;
 	public string uid;
 	public int weight;
+	public float  birth;
 
 	public GameObject centerRef;
 
@@ -37,13 +38,16 @@ public class User : MonoBehaviour
 		age = maxAge;//UnityEngine.Random.value * maxAge + maxAge * 0.5f;
 		audioSource = GetComponent <AudioSource> ();
 		audioSource.loop = false;
-
+		birth = Time.realtimeSinceStartup;
 	}
 
 	IEnumerator UserIsDying ()
 	{
 		yield return new WaitForSeconds (2);
-		userDeadDelegate (uid);
+		if (userDeadDelegate != null) {
+			userDeadDelegate (uid);
+			userDeadDelegate = null;
+		}
 	}
 	// Update is called once per frame
 	void Update ()
@@ -55,7 +59,7 @@ public class User : MonoBehaviour
 				StartCoroutine (UserIsDying ());
 
 
-				userDeadDelegate = null;
+
 			}
 		} else {
 			age -= 1;

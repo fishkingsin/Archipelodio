@@ -49,7 +49,7 @@ public class Main : MonoBehaviour
 		dialogsQueue = new Queue<AudioClip> ();
 		getUser = getUserObject.GetComponent<GetUsers> ();
 		getUser.fetchedUserDelegate += UserFetched;
-		loadAssetObject = GameObject.Find("Load");
+		loadAssetObject = GameObject.Find ("Load");
 		loadAsset = loadAssetObject.GetComponent <LoadAssets> ();
 		loadAsset.assetLoadedDelegate += AssetLoaded;
 		StartCoroutine (loadAsset.reload ());
@@ -102,14 +102,18 @@ public class Main : MonoBehaviour
 		Debug.Log ("fireDialog");
 
 	}
-	public class myMonsterSorter : IComparer  {
+
+	public class myMonsterSorter : IComparer
+	{
 
 		// Calls CaseInsensitiveComparer.Compare on the monster name string.
-		int IComparer.Compare( System.Object x, System.Object y )  {
-			return( (new CaseInsensitiveComparer()).Compare( ((GameObject)x).name, ((GameObject)y).name) );
+		int IComparer.Compare (System.Object x, System.Object y)
+		{
+			return((new CaseInsensitiveComparer ()).Compare (((GameObject)x).name, ((GameObject)y).name));
 		}
 
 	}
+
 	void Update ()
 	{
 		if (Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Ended) {
@@ -187,13 +191,13 @@ public class Main : MonoBehaviour
 	void AssignAudioClip (ref AudioSource audioSource, string uid)
 	{
 		if (audioSource.clip != null && audioSource.isPlaying && audioSources.Contains (uid)) {
-			Debug.Log ("AssignAudioClip audioSournce is playing return " + uid);
+//			Debug.Log ("AssignAudioClip audioSournce is playing return " + uid);
 			return;
 		}
 
 		try {
 			if (dialogAudioSourceRef == null && dialogs.Count > 0) {
-				Debug.Log ("AssignAudioClip : " + audioSource);
+				Debug.Log ("AssignAudioClip : " + audioSource + " to " + uid);
 
 				audioSource.clip = GetAudioClip (audioSource);
 				Debug.Log ("dialogAudioSource Clip : " + audioSource.clip.ToString ());
@@ -261,56 +265,72 @@ public class Main : MonoBehaviour
 	void AudioSourceCompleted (AudioSource audioSource, string uid)
 	{
 		try {
-			AudioSource tempDialogAudioSourceRef = null;
+			
+
 
 			//TODO more implementation here
-			AudioSource audioSource_ = (AudioSource)audioSources [uid];
-			if (audioSource != null) {
-				audioSource.Stop ();
+			try {
+				AudioSource audioSource_ = (AudioSource)audioSources [uid];
+				if (audioSource != null) {
+					audioSource.Stop ();
 
-				if (audioSource.Equals (dialogAudioSourceRef)) {
-					tempDialogAudioSourceRef = dialogAudioSourceRef;
-					dialogAudioSourceRef = null;
+					if (audioSource.Equals (dialogAudioSourceRef)) {
+					
+						dialogAudioSourceRef = null;
+
+					}
+					audioSource.clip = null;
+					audioSources.Remove (uid);
 				}
-				audioSource.clip = null;
-				audioSources.Remove (uid);
+				if (audioSource_ != null) {
+					audioSource_.Stop ();
+					audioSource_.clip = null;
+				}
+			} catch (Exception exception) {
+				Debug.Log ("AudioSourceCompleted " + exception.ToString ());
 			}
-			if (audioSource_ != null) {
-				audioSource_.Stop ();
-				audioSource_.clip = null;
+
+
+			//find oldest 
+			//find free user
+			GameObject targetUser = null;
+
+			foreach (DictionaryEntry entry in users) {
+				//Debug.Log (entry.Key + " " + entry.Value);
+				GameObject o = (GameObject)entry.Value;
+				User u = o.GetComponent<User> ();
+				AudioSource a__ = (AudioSource)audioSources [u.uid];
+				if (targetUser == null) {
+					targetUser = o;
+				} else {
+					if ((targetUser.GetComponent <User> ()).weight < u.weight ) {
+						User tu = (targetUser.GetComponent <User> ());
+						Debug.Log("tu id : "+ tu.uid + " | tu.weight " + tu.weight);
+						Debug.Log("u id : "+ u.uid + " | u.weight " + u.weight);
+						targetUser = o;
+
+					}
+				}
+			}
+			if ( targetUser != null) {
+				User user = targetUser.GetComponent <User> ();
+				AudioSource _as_ = targetUser.GetComponent <AudioSource> ();
+				AssignAudioClip (ref _as_, user.uid);
 			}
 
-
-//			User []tempArray = new User[users.Count];
-//			ICollection keys = users.Keys;
-
-//			users.CopyTo (tempArray,0);
-//			Array.Sort(tempArray, CompareCondition);
-
-//			audioSource = ((GameObject)users [tKey]).GetComponent<AudioSource> ();
-//
-//			while (audioSource.clip != null && count < users.Count) {
-//				index = (int)(UnityEngine.Random.value * keys.Length);
-//				tKey = keys [index];
-//				audioSource = ((GameObject)users [tKey]).GetComponent<AudioSource> ();
-//				tKey = keys [index];
-//				count++;
-//				Debug.Log ("AudioSourceCompleted count : " + count);
-//			}
-//			AssignAudioClip (ref audioSource, uid);
 
 		} catch (Exception exception) {
 			Debug.Log ("AudioSourceCompleted exception : " + exception.ToString ());
 		}
 	}
 
-//	int CompareCondition(GameObject itemA, GameObject itemB){
-//		User scriptA = itemA.GetComponent(User);
-//		User scriptB = itemB.GetComponent(User);
-//		if (scriptA.weight > scriptB.weight) return 1;
-//		if (scriptA.weight < scriptB.weight) return -1;
-//		return 0;
-//	}
+	//	int CompareCondition(GameObject itemA, GameObject itemB){
+	//		User scriptA = itemA.GetComponent(User);
+	//		User scriptB = itemB.GetComponent(User);
+	//		if (scriptA.weight > scriptB.weight) return 1;
+	//		if (scriptA.weight < scriptB.weight) return -1;
+	//		return 0;
+	//	}
 
 
 	void AssetLoaded (string assetBundleName)
@@ -372,8 +392,9 @@ public class Main : MonoBehaviour
 		return Math.Max (minVal, Math.Min (maxVal, i));
 	}
 
-	private static User SortByWeight(User o1, User o2) {
-		return (o1.weight > o2.weight)?o1:o2;
-	} 
+	private static User SortByWeight (User o1, User o2)
+	{
+		return (o1.weight > o2.weight) ? o1 : o2;
+	}
 
 }

@@ -11,20 +11,25 @@ public class GetUsers : MonoBehaviour
 	public string url = "http://www.moneme.com/Archipelodio/api/api/users";
 	#endif
 	// Use this for initialization
-	public delegate void FetchedUserDelegate(string a, double b, double c, double d);
+	public delegate void FetchedUserDelegate (string a, double b, double c, double d);
+
 	public FetchedUserDelegate fetchedUserDelegate;
+
 	IEnumerator Start ()
 	{
 		Debug.Log ("Verbose: GetUsers Start");
-		InvokeRepeating("repeat",0.0f, 10.0f);
+		InvokeRepeating ("repeat", 0.0f, 10.0f);
 //		StartCoroutine (fetchUser ());
 //		yield return fetchUser ();
 		yield return null;
 	}
-	void repeat(){
+
+	void repeat ()
+	{
 //		Debug.Log("GetUsers repeat");
-		StartCoroutine(fetchUser ());
+		StartCoroutine (fetchUser ());
 	}
+
 	IEnumerator fetchUser ()
 	{
 //		Debug.Log ("Verbose: fetchUser");
@@ -42,7 +47,7 @@ public class GetUsers : MonoBehaviour
 			Debug.Log ("Error: " + e);
 		}
 	}
-		
+
 
 	private void Processjson (string jsonString)
 	{
@@ -65,19 +70,21 @@ public class GetUsers : MonoBehaviour
 //			"| altitude: " + obj ["altitude"].str +
 //			"| timestamp: " + obj ["timestamp"].str +
 //			"| tester: " + obj ["tester"].str);
-			double loclong,loclat,altitude;
+			double loclong, loclat, altitude;
 			double.TryParse (obj ["loclong"].str, out loclong); 
-			double.TryParse(obj ["loclat"].str, out loclat);
-			double.TryParse(obj ["altitude"].str, out altitude);
-			try{
+			double.TryParse (obj ["loclat"].str, out loclat);
+			double.TryParse (obj ["altitude"].str, out altitude);
+			try {
 				string uid = obj ["uid"].str;
-			fetchedUserDelegate (uid, 
-				loclong,
-				loclat,
-				altitude
-				);
-			}catch(Exception exception ){
-				Debug.Log(exception.Message);
+				if (fetchedUserDelegate != null) {
+					fetchedUserDelegate (uid, 
+						loclong,
+						loclat,
+						altitude
+					);
+				}
+			} catch (Exception exception) {
+				Debug.Log (exception.Message);
 			}
 			break;
 		case JSONObject.Type.ARRAY:
