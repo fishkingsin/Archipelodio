@@ -5,7 +5,7 @@ using System;
 public class GetUsers : MonoBehaviour
 {
 	public GameObject user;
-	#if UNITY_EDITOR || DEVELOPMENT_BUILD
+	#if DEVELOPMENT_BUILD || UNITY_EDITOR
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/users";
 	#else
 	public string url = "http://www.moneme.com/Archipelodio/api/api/users";

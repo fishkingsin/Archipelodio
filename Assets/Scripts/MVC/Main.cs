@@ -122,9 +122,9 @@ public class Main : MonoBehaviour
 		}
 		if (Input.location.status == LocationServiceStatus.Running) {
 			lastData = Input.location.lastData;
-			float x = (float)Utils.Mapf (Limit (lastData.longitude, LEFT, RIGHT), LEFT, RIGHT, -max, max, false);
-			float y = (float)Utils.Mapf (Limit (lastData.altitude, 0, 900), 0, 900, 0.0f, max, true);
-			float z = (float)Utils.Mapf (Limit (lastData.latitude, TOP, BOTTOM), TOP, BOTTOM, -max, max, true);
+			float x = (float)Utils.Mapf (lastData.longitude , LEFT, RIGHT, -max, max, false);
+			float y = (float)Utils.Mapf (lastData.altitude , 0, 900, 0.0f, max, true);
+			float z = (float)Utils.Mapf (lastData.latitude , TOP, BOTTOM, -max, max, true);
 			dicoCircle.transform.position = Vector3.Lerp (dicoCircle.transform.position, new Vector3 (x, y, z), 0.5f);
 		}
 	}
