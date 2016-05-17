@@ -26,7 +26,7 @@ public class Main : MonoBehaviour
 	public GameObject aboutCanvas;
 	public GameObject getUserObject;
 	public GameObject loadAssetObject;
-	private bool isShowing;
+
 	public int numObjects;
 	public GameObject dicoCircle;
 	float max = 5.0f;
@@ -53,16 +53,17 @@ public class Main : MonoBehaviour
 		getUser = getUserObject.GetComponent<GetUsers> ();
 		getUser.fetchedUserDelegate += UserFetched;
 		loadAssetObject = GameObject.Find ("Load");
-		try{
+		try {
 			loadAsset = loadAssetObject.GetComponent <LoadAssets> ();
 			loadAsset.assetLoadedDelegate += AssetLoaded;
 			StartCoroutine (loadAsset.reload ());
-		}catch(Exception e){
+		} catch (Exception e) {
 			Debug.Log (e.ToString ());
 		}
 
 		dialogAudioSourceRef = null;
 //		InvokeRepeating ("fireDialogInterval", 1.0f, 1.0f);
+		aboutCanvas.SetActive (false);
 	}
 
 	void UserDead (string uid)
@@ -124,9 +125,9 @@ public class Main : MonoBehaviour
 
 	void Update ()
 	{
-		if (Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Ended) {
-			isShowing = !isShowing;
-			canvas.SetActive (isShowing);
+		if ((Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Ended)) {
+			
+			canvas.SetActive (!canvas.activeSelf);
 		}
 		if (Input.location.status == LocationServiceStatus.Running) {
 			lastData = Input.location.lastData;
@@ -429,7 +430,9 @@ public class Main : MonoBehaviour
 	{
 		return (o1.weight > o2.weight) ? o1 : o2;
 	}
-	public void onAboutClick () {
+
+	public void onAboutClick ()
+	{
 		aboutCanvas.SetActive (!aboutCanvas.activeSelf);
 	}
 

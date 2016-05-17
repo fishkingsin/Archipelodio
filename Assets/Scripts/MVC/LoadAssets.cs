@@ -157,6 +157,7 @@ public class LoadAssets : MonoBehaviour
 
 		List<AssetBundleLoadOperation> operations = AssetBundleManager.GetInProgressOperations ();
 
+
 		float part = operations.Count;
 		foreach (AssetBundleLoadOperation operation in operations) {
 			
@@ -180,9 +181,21 @@ public class LoadAssets : MonoBehaviour
 		// Load asset from assetBundle.
 		Debug.Log ("InstantiateGameObjectAsync : assetBundleName : " + assetBundleName);
 		AssetBundleLoadAssetOperation request = AssetBundleManager.LoadAssetAsync (assetBundleName, assetName, t);
+		List<AssetBundleLoadOperation> operations = AssetBundleManager.GetInProgressOperations ();
+		if (operations.Count > 0) {
+			
+			if (operations[0].GetType ().Equals (typeof(AssetBundleDownloadFromWebOperation))) {
+				AssetBundleDownloadFromWebOperation operation = (AssetBundleDownloadFromWebOperation)operations[0];
+				operation.downloadFailedDelegate += DownloadFail;
+
+			}
+		}
+
 		if (request == null)
 			yield break;
 		yield return StartCoroutine (request);
+
+
 
 		// Get the asset.
 		GameObject prefab = request.GetAsset<GameObject> ();
@@ -191,15 +204,17 @@ public class LoadAssets : MonoBehaviour
 			if (assetLoadedDelegate != null) {
 				assetLoadedDelegate (assetBundleName);
 			}
-		} else {
-			if (assetLoadedErrorDelegate != null) {
-				assetLoadedErrorDelegate ("AssetBundle fail to load " + url);
-			}
 		}
 
 		// Calculate and display the elapsed time.
 		float elapsedTime = Time.realtimeSinceStartup - startTime;
 		Debug.Log (assetName + (prefab == null ? " was not" : " was") + " loaded successfully in " + elapsedTime + " seconds");
 
+	}
+
+	void DownloadFail(string err){
+		if (assetLoadedErrorDelegate != null) {
+			assetLoadedErrorDelegate (err);
+		}
 	}
 }

@@ -147,8 +147,12 @@ namespace AssetBundles
 
     public class AssetBundleDownloadFromWebOperation : AssetBundleDownloadOperation
     {
+		public delegate void DownloadFailedDelegate (string error);
+
+		public DownloadFailedDelegate downloadFailedDelegate;
         WWW m_WWW;
         string m_Url;
+
         public AssetBundleDownloadFromWebOperation(string assetBundleName, WWW www)
             : base(assetBundleName)
         {
@@ -163,8 +167,13 @@ namespace AssetBundles
         protected override void FinishDownload()
         {
             error = m_WWW.error;
-            if (!string.IsNullOrEmpty(error))
-                return;
+			if (!string.IsNullOrEmpty (error)) {
+				Debug.Log (error);
+				if (downloadFailedDelegate != null) {
+					downloadFailedDelegate (error);
+				}
+				return;
+			}
 
             AssetBundle bundle = m_WWW.assetBundle;
             if (bundle == null)
@@ -266,7 +275,6 @@ namespace AssetBundles
                 Debug.LogError(m_DownloadingError);
                 return true;
             }
-
             return m_Request != null && m_Request.isDone;
         }
     }
