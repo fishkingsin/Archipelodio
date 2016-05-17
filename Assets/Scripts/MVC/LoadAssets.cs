@@ -27,7 +27,7 @@ public class LoadAssets : MonoBehaviour
 	#if UNITY_EDITOR || DEVELOPMENT_BUILD
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/assetBundle";
 	#else
-	public string url = "http://www.moneme.com/Archipelodio/api/api/assetBundle";
+	public string url = "http://www.moneme.com/Archipelodio/api/assetBundle";
 	#endif
 
 	// Use this for initialization
@@ -52,11 +52,12 @@ public class LoadAssets : MonoBehaviour
 		// Load asset.
 
 
-			yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName, assetName, typeof(AudioClip)));
+		yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName, assetName, typeof(AudioClip)));
 
 	}
 
-	public IEnumerator reload (){
+	public IEnumerator reload ()
+	{
 		yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName, assetName, typeof(AudioClip)));
 	}
 
@@ -123,8 +124,8 @@ public class LoadAssets : MonoBehaviour
 		// (This is very dependent on the production workflow of the project.
 		//      Another approach would be to make this configurable in the standalone player.)
 
-		//        AssetBundleManager.SetDevelopmentAssetBundleServer();
-		//		AssetBundleManager.SetSourceAssetBundleURL ("http://www.mb09.com/ARCHIPELAUDIO/AssetBundles/");
+//        AssetBundleManager.SetDevelopmentAssetBundleServer();
+//		AssetBundleManager.SetSourceAssetBundleURL ("http://www.mb09.com/ARCHIPELAUDIO/AssetBundles/");
 		AssetBundleManager.SetSourceAssetBundleURL ("http://www.moneme.com/Archipelodio/AssetBundles/");
 		return;
 		#else
@@ -155,9 +156,12 @@ public class LoadAssets : MonoBehaviour
 		float progress = 0; 
 
 		List<AssetBundleLoadOperation> operations = AssetBundleManager.GetInProgressOperations ();
+
 		float part = operations.Count;
 		foreach (AssetBundleLoadOperation operation in operations) {
+			
 			if (operation.GetType ().Equals (typeof(AssetBundleDownloadFromWebOperation))) {
+				
 				float downloadProgress = ((AssetBundleDownloadFromWebOperation)operation).GetProgress ();
 				Debug.Log ("operation.GetProgress () : " + downloadProgress);
 				progress += downloadProgress / part;
@@ -189,7 +193,7 @@ public class LoadAssets : MonoBehaviour
 			}
 		} else {
 			if (assetLoadedErrorDelegate != null) {
-				assetLoadedErrorDelegate ("AssetBundle fail to load "+ url);
+				assetLoadedErrorDelegate ("AssetBundle fail to load " + url);
 			}
 		}
 

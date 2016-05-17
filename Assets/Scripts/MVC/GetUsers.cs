@@ -5,20 +5,24 @@ using System;
 public class GetUsers : MonoBehaviour
 {
 	public GameObject user;
-	#if DEVELOPMENT_BUILD || UNITY_EDITOR
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/users";
-	#else
-	public string url = "http://www.moneme.com/Archipelodio/api/api/users";
-	#endif
 	// Use this for initialization
 	public delegate void FetchedUserDelegate (string a, double b, double c, double d);
 
 	public FetchedUserDelegate fetchedUserDelegate;
+	public float repeatRate;
 
 	IEnumerator Start ()
 	{
+
+		#if DEVELOPMENT_BUILD || UNITY_EDITOR
+		url = "http://www.mb09.com/ARCHIPELAUDIO/api/users";
+		#else
+		url = "http://www.moneme.com/Archipelodio/api/users";
+		#endif
+
 		Debug.Log ("Verbose: GetUsers Start");
-		InvokeRepeating ("repeat", 0.0f, 10.0f);
+		InvokeRepeating ("repeat", 0.0f, repeatRate);
 //		StartCoroutine (fetchUser ());
 //		yield return fetchUser ();
 		yield return null;

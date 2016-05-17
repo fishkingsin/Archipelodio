@@ -4,11 +4,8 @@ using System;
 
 public class SubmitLocation : MonoBehaviour
 {
-	#if UNITY_EDITOR || DEVELOPMENT_BUILD
 	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/update";
-	#else
-	public string url = "http://www.moneme.com/Archipelodio/api/update";
-	#endif
+
 	// Use this for initialization
 	public double latitude;
 	public double longitude;
@@ -17,6 +14,11 @@ public class SubmitLocation : MonoBehaviour
 
 	IEnumerator Start ()
 	{
+		#if UNITY_EDITOR || DEVELOPMENT_BUILD
+		url = "http://www.mb09.com/ARCHIPELAUDIO/api/update";
+		#else
+		url = "http://www.moneme.com/Archipelodio/api/update";
+		#endif
 		InvokeRepeating ("IntervalFunction", 0.0f, 10.0F);
 		latitude = 0;
 		longitude = 0;

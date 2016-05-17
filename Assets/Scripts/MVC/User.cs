@@ -63,7 +63,7 @@ public class User : MonoBehaviour
 			}
 		} else {
 			age -= 1;
-			float s = Mathf.Min (age, 100.0f) / 100.0f;
+			float s = Mathf.Min (age, 500.0f) / 500.0f;
 			float m = Utils.Mapf (s, 0.0f, 1.0f, 0.1f, 1.0f, true);
 			transform.localScale = mScale * m;
 
