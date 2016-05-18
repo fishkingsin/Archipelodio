@@ -125,7 +125,7 @@ public class Main : MonoBehaviour
 
 	void Update ()
 	{
-		if ((Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Ended)) {
+		if ((Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Ended) && !aboutCanvas.activeSelf) {
 			
 			canvas.SetActive (!canvas.activeSelf);
 		}
