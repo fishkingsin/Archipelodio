@@ -79,7 +79,7 @@ namespace AssetBundles
 		static LogMode m_LogMode = LogMode.All;
 		static string m_BaseDownloadingURL = "";
 		static string[] m_ActiveVariants = { };
-		static AssetBundleManifest m_AssetBundleManifest = null;
+		public static AssetBundleManifest m_AssetBundleManifest = null;
 		#if UNITY_EDITOR
 		static int m_SimulateAssetBundleInEditor = -1;
 		const string kSimulateAssetBundles = "SimulateAssetBundles";

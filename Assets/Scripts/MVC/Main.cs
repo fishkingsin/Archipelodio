@@ -34,24 +34,28 @@ public class Main : MonoBehaviour
 	GetUsers getUser;
 	LoadAssets loadAsset;
 
-	List<AudioClip> soundfields;
-	List<AudioClip> dialogs;
-	Queue<AudioClip> dialogsQueue;
-	Queue<AudioClip> soundfieldsQueue;
+	List<string> soundfields;
+	List<string> dialogs;
+//	Queue<AudioClip> dialogsQueue;
+//	Queue<AudioClip> soundfieldsQueue;
 	AudioSource dialogAudioSourceRef;
 
 	LocationInfo lastData;
-
+	AssetBundle assetBundle;
 	void Start ()
 	{
-		
-		soundfields = new List<AudioClip> ();	
-		dialogs = new List<AudioClip> ();	
+		Screen.sleepTimeout = SleepTimeout.NeverSleep;
+		soundfields = new List<string> ();	
+		dialogs = new List<string> ();	
 		users = new Hashtable ();
 		audioSources = new Hashtable ();
-		dialogsQueue = new Queue<AudioClip> ();
+//		dialogsQueue = new Queue<AudioClip> ();
+//		soundfieldsQueue = new Queue<AudioClip> ();
+
 		getUser = getUserObject.GetComponent<GetUsers> ();
 		getUser.fetchedUserDelegate += UserFetched;
+//		AssetLoaded ("audio");
+
 		loadAssetObject = GameObject.Find ("Load");
 		try {
 			loadAsset = loadAssetObject.GetComponent <LoadAssets> ();
@@ -112,19 +116,10 @@ public class Main : MonoBehaviour
 
 	}
 
-	public class myMonsterSorter : IComparer
-	{
-
-		// Calls CaseInsensitiveComparer.Compare on the monster name string.
-		int IComparer.Compare (System.Object x, System.Object y)
-		{
-			return((new CaseInsensitiveComparer ()).Compare (((GameObject)x).name, ((GameObject)y).name));
-		}
-
-	}
 
 	void Update ()
 	{
+		
 		if ((Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Ended) && !aboutCanvas.activeSelf) {
 			
 			canvas.SetActive (!canvas.activeSelf);
@@ -141,6 +136,7 @@ public class Main : MonoBehaviour
 	void UserFetched (string uid, double longitude, double latitude, double altutide)
 	{
 		try {
+			System.GC.Collect();
 			#if UNITY_EDITOR
 			string myuid = "debugger";
 			#else
@@ -223,8 +219,8 @@ public class Main : MonoBehaviour
 				Debug.Log ("AssignAudioClip : " + audioSource);
 				try {
 					if (audioSources.Count < numObjects) {
-						int index = (int)(UnityEngine.Random.value * soundfields.Count);
-						AudioClip audioClip = soundfields [index];
+//						int index = (int)(UnityEngine.Random.value * soundfields.Count);
+						AudioClip audioClip = GetAudioClip (audioSource);;
 						audioSource.clip = audioClip;
 						audioSource.Play ();
 						audioSource.volume = 0.0f;
@@ -248,13 +244,15 @@ public class Main : MonoBehaviour
 	{
 		if (dialogAudioSourceRef == null && !audioSource.Equals (dialogAudioSourceRef)) {
 			dialogAudioSourceRef = audioSource;
-			if (dialogsQueue.Count == 0) {
-				ShuffleDialog ();
-			}
+//			if (dialogsQueue.Count == 0) {
+//				ShuffleDialog ();
+//			}
 			AudioClip dialogAudioClip = null;
-			if (dialogsQueue.Count != 0) {
+			if (dialogs.Count != 0) {
 				
-				dialogAudioClip = dialogsQueue.Dequeue ();
+//				dialogAudioClip = dialogsQueue.Dequeue ();
+				dialogAudioClip = assetBundle.LoadAsset<AudioClip> (dialogs[(int)(UnityEngine.Random.value*dialogs.Count)]);
+					
 
 				Debug.Log ("Got dailog clip " + dialogAudioClip.ToString ());
 
@@ -263,13 +261,13 @@ public class Main : MonoBehaviour
 		} else {
 			AudioClip audioClip = null;
 			if (soundfields.Count > 0) {
-				if (soundfieldsQueue.Count == 0) {
-					ShuffleSoundfields ();
-				}
+//				if (soundfieldsQueue.Count == 0) {
+//					ShuffleSoundfields ();
+//				}
 				AudioClip soundfieldsAudioClip = null;
-				if (soundfieldsQueue.Count != 0) {
+				if (soundfields.Count != 0) {
 
-					soundfieldsAudioClip = soundfieldsQueue.Dequeue ();
+					soundfieldsAudioClip = assetBundle.LoadAsset<AudioClip> ( soundfields[(int)(UnityEngine.Random.value*soundfields.Count)]);
 
 					Debug.Log ("Got dailog clip " + soundfieldsAudioClip.ToString ());
 					audioClip = soundfieldsAudioClip;
@@ -363,23 +361,29 @@ public class Main : MonoBehaviour
 			string err;
 			LoadedAssetBundle loadedAssetBundle = AssetBundleManager.GetLoadedAssetBundle (assetBundleName, out err);
 			if (err == null) {
-				AssetBundle assetBundle = loadedAssetBundle.m_AssetBundle;
+				assetBundle = loadedAssetBundle.m_AssetBundle;
 				if (assetBundle != null) {
-					AudioClip[] clips = assetBundle.LoadAllAssets<AudioClip> ();
-					foreach (AudioClip clip in clips) {
-						if (clip.ToString ().StartsWith ("F") || clip.ToString ().Contains ("_OL")) {
-							dialogs.Add (clip);
-						} else {
-							soundfields.Add (clip);
+					string []assetNames = assetBundle.GetAllAssetNames ();					
+					foreach(string name in assetNames){
+						if (name.ToString ().Contains("dialog")) {
+							Log (LogType.Log, "dialogs : -> " + name);
+							dialogs.Add (name);
+						}else{
+							Log (LogType.Log, "soundfield : -> " + name);
+							soundfields.Add (name);
 						}
 					}
+//					AudioClip[] clips = assetBundle.LoadAllAssets<AudioClip> ();
+//					foreach (AudioClip clip in clips) {
+//						if (clip.ToString ().StartsWith ("F") || clip.ToString ().Contains ("_OL")) {
+////							dialogs.Add (clip);
+//							Log (LogType.Log, "dialogs : -> " + clip.ToString () + " | Class : " + clip.GetType ());
+//						} else {
+////							soundfields.Add (clip);
+//							Log (LogType.Log, "soundfield : -> " + clip.ToString () + " | Class : " + clip.GetType ());
+//						}
+//					}
 						
-//					for (int i = 0; i < dialogs.Count; i++) {
-//						Log (LogType.Log, "dialogs : -> " + dialogs [i].ToString () + " | Class : " + dialogs [i].GetType ());
-//					}
-//					for (int i = 0; i < soundfields.Count; i++) {
-//						Log (LogType.Log, "soundfields : -> " + soundfields [i].ToString () + " | Class : " + soundfields [i].GetType ());
-//					}
 
 				}
 			}
@@ -388,27 +392,29 @@ public class Main : MonoBehaviour
 
 	}
 
-	private void ShuffleDialog ()
-	{
-		List<AudioClip> tempList = dialogs;
-		Utils.Shuffle (ref tempList);	
-
-		foreach (AudioClip ac in tempList) {
-			dialogsQueue.Enqueue (ac);
-		}
-
-	}
-
-	private void ShuffleSoundfields ()
-	{
-		List<AudioClip> tempList = soundfields;
-		Utils.Shuffle (ref tempList);	
-
-		foreach (AudioClip ac in tempList) {
-			soundfieldsQueue.Enqueue (ac);
-		}
-
-	}
+//	private void ShuffleDialog ()
+//	{
+//		List<AudioClip> tempList = dialogs;
+//		Utils.Shuffle (ref tempList);	
+//
+//		foreach (AudioClip ac in tempList) {
+//			dialogsQueue.Enqueue (ac);
+//		}
+//		tempList = null;
+//
+//	}
+//
+//	private void ShuffleSoundfields ()
+//	{
+//		List<AudioClip> tempList = soundfields;
+//		Utils.Shuffle (ref tempList);	
+//
+//		foreach (AudioClip ac in tempList) {
+//			soundfieldsQueue.Enqueue (ac);
+//		}
+//		tempList = null;
+//
+//	}
 
 	static public AssetBundles.AssetBundleManager.LogMode m_LogMode;
 

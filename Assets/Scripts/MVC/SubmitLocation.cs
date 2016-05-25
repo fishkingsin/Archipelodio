@@ -64,7 +64,9 @@ public class SubmitLocation : MonoBehaviour
 		latitude = Input.location.lastData.latitude;
 		longitude = Input.location.lastData.longitude;
 		altitude = Input.location.lastData.altitude;
-		heading = (int)Mathf.Round (Input.compass.trueHeading);
+		if (Input.compass.enabled) {
+			heading = (int)Mathf.Round (Input.compass.trueHeading);
+		}
 	}
 
 	void IntervalFunction ()

@@ -9,8 +9,7 @@ using System.Collections.Generic;
 public class LoadAssets : MonoBehaviour
 {
 	public const string AssetBundlesOutputPath = "/AssetBundles/";
-	public string assetBundleName;
-	public string assetName;
+	public List<string> assetBundleNames;
 
 	public delegate void AssetLoadedDelegate (string assetBundleName);
 
@@ -24,46 +23,53 @@ public class LoadAssets : MonoBehaviour
 
 	public AssetLoadedErrorDelegate assetLoadedErrorDelegate;
 
-	#if UNITY_EDITOR || DEVELOPMENT_BUILD
-	public string url = "http://www.mb09.com/ARCHIPELAUDIO/api/assetBundle";
-	#else
-	public string url = "http://www.moneme.com/Archipelodio/api/assetBundle";
-	#endif
+
 
 	// Use this for initialization
 	IEnumerator Start ()
 	{
+		
+		
 		Application.targetFrameRate = 30;
 		yield return StartCoroutine (Initialize ());
-
-		//		WWW www = new WWW (url);
-		//		yield return www;
-		//		try {
-		//			if (www.error == null) {
-		//
-		//				Processjson (www.text);
-		//			} else {
-		//				Debug.Log ("ERROR: " + www.error);
-		//			}
-		//		} catch (Exception e) {
-		//			Debug.Log ("Error: " + e);
-		//		}
-
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+		string url = "http://www.mb09.com/ARCHIPELAUDIO/api/assetBundles";
+#else
+		string url = "http://www.moneme.com/Archipelodio/api/assetBundles";
+#endif
+//		WWW www = new WWW (url);
+//		yield return www;
+//		try {
+//			if (www.error == null) {
+//
+//				Processjson (www.text);
+//			} else {
+//				Debug.Log ("ERROR: WWW" + www.error);
+//			}
+//		} catch (Exception e) {
+//			Debug.Log ("Error: " + e);
+//		}
+//		assetBundleNames = new List<string> ();
+//		assetBundleNames.Add ("audio");
 		// Load asset.
 
-
-		yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName, assetName, typeof(AudioClip)));
+//		foreach (string assetBundleName in assetBundleNames) {
+//			yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName, "sample", typeof(AudioClip)));
+//		}
+//		yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName, assetName, typeof(AudioClip)));
 
 	}
 
 	public IEnumerator reload ()
 	{
-		yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName, assetName, typeof(AudioClip)));
+		foreach (string assetBundleName in assetBundleNames) {
+			yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName, "sample", typeof(AudioClip)));
+		}
 	}
 
 	private void Processjson (string jsonString)
 	{
-		//		Debug.Log ("Processjson: " + jsonString);
+		Debug.Log ("Processjson: " + jsonString);
 		JSONObject jsonvale = new JSONObject (jsonString);
 
 		accessData (jsonvale);
@@ -74,6 +80,10 @@ public class LoadAssets : MonoBehaviour
 	{
 		switch (obj.type) {
 		case JSONObject.Type.OBJECT:
+			Debug.Log ("accessData: OBJECT :" + obj ["files"]);
+			accessData (obj ["files"]);
+
+
 			//			Debug.Log ("lid:" + obj ["lid"].str +
 			//			"| uid: " + obj ["uid"].str +
 			//			"| loclat: " + obj ["loclat"].str +
@@ -86,7 +96,7 @@ public class LoadAssets : MonoBehaviour
 			//			float.TryParse (obj ["loclong"].str, out loclong); 
 			//			float.TryParse (obj ["loclat"].str, out loclat);
 			//			float.TryParse (obj ["altitude"].str, out altitude);
-			accessData (obj);
+
 			break;
 		case JSONObject.Type.BOOL:
 
@@ -98,10 +108,22 @@ public class LoadAssets : MonoBehaviour
 
 			break;
 		case JSONObject.Type.ARRAY:
+			string variant = (Application.platform == RuntimePlatform.Android) ? "Android" : "iOS";
 			foreach (JSONObject j in obj.list) {
-				accessData (j);
+				
+				if (j.str.Contains (variant)) {
+					Debug.Log ("JSONObject  :" + j.str);
+					string objectString = j.str;
+
+					string path = "..\\/AssetBundles\\/" + variant + "\\/";
+					string bundleName = objectString.Substring (path.Length);
+					assetBundleNames.Add (bundleName);
+				}
+
 
 			}
+			StartCoroutine (reload ());
+
 			break;
 
 		}
@@ -113,10 +135,9 @@ public class LoadAssets : MonoBehaviour
 	{
 		// If ODR is available and enabled, then use it and let Xcode handle download requests.
 		#if ENABLE_IOS_ON_DEMAND_RESOURCES
-		if (UnityEngine.iOS.OnDemandResources.enabled)
-		{
-		AssetBundleManager.SetSourceAssetBundleURL("odr://");
-		return;
+		if (UnityEngine.iOS.OnDemandResources.enabled) {
+			AssetBundleManager.SetSourceAssetBundleURL ("odr://");
+			return;
 		}
 		#endif
 		#if DEVELOPMENT_BUILD || 	UNITY_EDITOR
@@ -125,8 +146,8 @@ public class LoadAssets : MonoBehaviour
 		//      Another approach would be to make this configurable in the standalone player.)
 
 //        AssetBundleManager.SetDevelopmentAssetBundleServer();
-//		AssetBundleManager.SetSourceAssetBundleURL ("http://www.mb09.com/ARCHIPELAUDIO/AssetBundles/");
-		AssetBundleManager.SetSourceAssetBundleURL ("http://www.moneme.com/Archipelodio/AssetBundles/");
+		AssetBundleManager.SetSourceAssetBundleURL ("http://www.mb09.com/ARCHIPELAUDIO/AssetBundles/");
+//		AssetBundleManager.SetSourceAssetBundleURL ("http://www.moneme.com/Archipelodio/AssetBundles/");
 		return;
 		#else
 		// Use the following code if AssetBundles are embedded in the project for example via StreamingAssets folder etc:
@@ -149,6 +170,12 @@ public class LoadAssets : MonoBehaviour
 		var request = AssetBundleManager.Initialize ();
 		if (request != null)
 			yield return StartCoroutine (request);
+		
+		AssetBundleManifest manifest = AssetBundleManager.m_AssetBundleManifest;
+		assetBundleNames = new List<string> (manifest.GetAllAssetBundles ());
+		foreach (string assetBundleName in assetBundleNames) {
+			yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName, "sample", typeof(AudioClip)));
+		}
 	}
 
 	void Update ()
@@ -184,8 +211,8 @@ public class LoadAssets : MonoBehaviour
 		List<AssetBundleLoadOperation> operations = AssetBundleManager.GetInProgressOperations ();
 		if (operations.Count > 0) {
 			
-			if (operations[0].GetType ().Equals (typeof(AssetBundleDownloadFromWebOperation))) {
-				AssetBundleDownloadFromWebOperation operation = (AssetBundleDownloadFromWebOperation)operations[0];
+			if (operations [0].GetType ().Equals (typeof(AssetBundleDownloadFromWebOperation))) {
+				AssetBundleDownloadFromWebOperation operation = (AssetBundleDownloadFromWebOperation)operations [0];
 				operation.downloadFailedDelegate += DownloadFail;
 
 			}
@@ -212,7 +239,8 @@ public class LoadAssets : MonoBehaviour
 
 	}
 
-	void DownloadFail(string err){
+	void DownloadFail (string err)
+	{
 		if (assetLoadedErrorDelegate != null) {
 			assetLoadedErrorDelegate (err);
 		}
