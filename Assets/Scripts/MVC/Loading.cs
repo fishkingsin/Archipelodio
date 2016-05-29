@@ -17,6 +17,7 @@ public class Loading : MonoBehaviour
 
 	void Start ()
 	{
+		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 		loadAsset = loadAssetObject.GetComponent <LoadAssets> ();
 		loadAsset.assetLoadedDelegate += AssetLoaded;
 		loadAsset.assetDownloadProgressDelegate += AssetDownloadProgress;
