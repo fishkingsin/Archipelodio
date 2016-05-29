@@ -36,6 +36,8 @@ public class Main : MonoBehaviour
 
 	List<string> soundfields;
 	List<string> dialogs;
+
+	public Hashtable assetBundleRef;
 	AudioSource dialogAudioSourceRef;
 
 	LocationInfo lastData;
@@ -47,6 +49,7 @@ public class Main : MonoBehaviour
 		soundfields = new List<string> ();	
 		dialogs = new List<string> ();	
 		users = new Hashtable ();
+		assetBundleRef = new Hashtable ();
 		audioSources = new Hashtable ();
 
 		getUser = getUserObject.GetComponent<GetUsers> ();
@@ -134,7 +137,7 @@ public class Main : MonoBehaviour
 	void UserFetched (string uid, double longitude, double latitude, double altutide)
 	{
 		try {
-			Debug.Log ("System.GC.Collect ()");
+//			Debug.Log ("System.GC.Collect ()");
 			System.GC.Collect ();
 			#if UNITY_EDITOR
 			string myuid = "debugger";
@@ -202,30 +205,21 @@ public class Main : MonoBehaviour
 			if (dialogAudioSourceRef == null && dialogs.Count > 0) {
 				Debug.Log ("AssignAudioClip : " + audioSource + " to " + uid);
 
-				GetAudioClip (ref audioSource);
-				Debug.Log ("dialogAudioSource Clip : " + audioSource.clip.ToString ());
-				audioSource.Play ();
-				audioSource.volume = 0.0f;
-				dialogAudioSourceRef = audioSource;
-				Debug.Log ("audioSources.Add  " + uid);
-				audioSources.Add (uid, audioSource);
-				StartCoroutine (AudioFadeOut.FadeIn (audioSource, 1.0f));
+				StartCoroutine (GetAudioClip (uid));
+//				Debug.Log ("dialogAudioSource Clip : " + audioSource.clip.ToString ());
+//				audioSource.Play ();
+//				audioSource.volume = 0.0f;
+//				dialogAudioSourceRef = audioSource;
+//				Debug.Log ("audioSources.Add  " + uid);
+//				audioSources.Add (uid, audioSource);
+//				StartCoroutine (AudioFadeOut.FadeIn (audioSource, 1.0f));
 			} else if (soundfields.Count > 0) {
 				Debug.Log ("AssignAudioClip : " + audioSource);
-				try {
-					if (audioSources.Count < numObjects) {
 
-						GetAudioClip (ref audioSource);
-
-						audioSource.Play ();
-						audioSource.volume = 0.0f;
-						StartCoroutine (AudioFadeOut.FadeIn (audioSource, 1.0f));
-						Debug.Log ("audioSources.Add  " + uid);
-						audioSources.Add (uid, audioSource);
-					}
-				} catch (Exception exception) {
-					Debug.Log ("AssignAudioClip : " + exception.Message);
+				if (audioSources.Count < numObjects) {
+					StartCoroutine (GetAudioClip (uid));
 				}
+
 			} else {
 				Debug.Log ("AssignAudioClip nothing assign : audioSources.Count " + audioSources.Count);
 			}
@@ -234,70 +228,91 @@ public class Main : MonoBehaviour
 		}
 	}
 
-	void GetAudioClip (ref AudioSource audioSource)
+	IEnumerator GetAudioClip (string uid)
 	{
-		if (audioSource.clip != null) {
-			
-			audioSource.clip = null;
-		}
-		if (dialogAudioSourceRef == null && !audioSource.Equals (dialogAudioSourceRef)) {
-			
-			dialogAudioSourceRef = audioSource;
-
-//			AudioClip audioClip = null;
-			if (dialogs.Count != 0) {
+		GameObject gameObject = (GameObject)users [uid];
+		AudioSource audioSource = gameObject.GetComponent <AudioSource> ();
+		if (audioSource != null) {
+			if (audioSource.clip != null) {
 				
-				int index = (int)(UnityEngine.Random.value * dialogs.Count);
-				string err;
-				LoadedAssetBundle loadedAssetBundle = AssetBundleManager.GetLoadedAssetBundle (dialogs [index], out err);
-				if (err == null) {
-					
-					AssetBundle assetBundle = loadedAssetBundle.m_AssetBundle;
-					string[] names = assetBundle.GetAllAssetNames ();
-					int index2 = (int)(UnityEngine.Random.value * names.Length);
+				AudioClip clip = audioSource.clip;
+
+				audioSource.clip = null;
+				Destroy (clip);
+			}
+			if (dialogAudioSourceRef == null && !audioSource.Equals (dialogAudioSourceRef)) {
+			
+				dialogAudioSourceRef = audioSource;
+
+				if (dialogs.Count > 0) {
+				
+					int index = (int)(UnityEngine.Random.value * dialogs.Count);
+					string[] assetNames = (string[])assetBundleRef [dialogs [index]];
+					int index2 = (int)(UnityEngine.Random.value * assetNames.Length);
 					Debug.Log ("Got dialogs bundles index" + index);
 					Debug.Log ("Got dialogs bundles asset index2" + index2);
-					string path = names [index2];
+					string assetBundelName = dialogs [index];
+					string path = assetNames [index2];
 					Debug.Log ("Got dialogs path " + path);
-					audioSource.clip = assetBundle.LoadAsset<AudioClip> (path);
-//					assetBundle.Unload (false);
-					Debug.Log ("dialogs assetBundle.Unload (false)");
+					AssetBundleLoadAssetOperation request = AssetBundleManager.LoadAssetAsync (assetBundelName, path, typeof(AudioClip));
+					yield return StartCoroutine (request);
 
-				} else {
-					Debug.Log ("Error load dailog clip " + dialogs [index]);
+					AudioClip prefab = request.GetAsset<AudioClip> ();
+					if (prefab != null) {
+						audioSource.clip = (AudioClip)prefab;
+						audioSource.Play ();
+						audioSource.volume = 0.0f;
+						StartCoroutine (AudioFadeOut.FadeIn (audioSource, 1.0f));
+						Debug.Log ("audioSources.Add  " + uid);
+						audioSources.Add (uid, audioSource);
+						string err;
+						LoadedAssetBundle loadedBundle = AssetBundleManager.GetLoadedAssetBundle (assetBundelName, out err);
+						if (err == null) {
+							if (loadedBundle.m_AssetBundle != null) {
+								loadedBundle.m_AssetBundle.Unload (false);
+							}
+						}
+					} else {
+						Debug.Log ("Error : failed to load " + assetBundelName + " " + path);
+					}
 				}
+			} else {
 
-			}
-//			return audioClip;
-		} else {
-//			AudioClip audioClip = null;
-			if (soundfields.Count > 0) {
+				if (soundfields.Count > 0) {
+					
+					int index = (int)(UnityEngine.Random.value * soundfields.Count);
 
-				int index = (int)(UnityEngine.Random.value * soundfields.Count);
-				string err;
-				LoadedAssetBundle loadedAssetBundle = AssetBundleManager.GetLoadedAssetBundle (soundfields [index], out err);
-				if (err == null) {
-
-					AssetBundle assetBundle = loadedAssetBundle.m_AssetBundle;
-					string[] names = assetBundle.GetAllAssetNames ();
-					int index2 = (int)(UnityEngine.Random.value * names.Length);
+					string[] assetNames = (string[])assetBundleRef [soundfields [index]];
+					int index2 = (int)(UnityEngine.Random.value * assetNames.Length);
 					Debug.Log ("Got soundfields bundles index" + index);
 					Debug.Log ("Got soundfields bundles asset index2" + index2);
-					string path = names [index2];
+					string assetBundelName = soundfields [index];
+					string path = assetNames [index2];
 					Debug.Log ("Got soundfields path " + path);
-					audioSource.clip = assetBundle.LoadAsset<AudioClip> (path);
-//					assetBundle.Unload (false);
-					Debug.Log ("soundfields assetBundle.Unload (false)");
+					AssetBundleLoadAssetOperation request = AssetBundleManager.LoadAssetAsync (assetBundelName, path, typeof(AudioClip));
+					yield return StartCoroutine (request);
 
-
-				} else {
-					Debug.Log ("Error load soundfields clip " + soundfields [index]);
+					AudioClip prefab = request.GetAsset<AudioClip> ();
+					if (prefab != null) {
+						audioSource.clip = (AudioClip)prefab;
+						audioSource.Play ();
+						audioSource.volume = 0.0f;
+						StartCoroutine (AudioFadeOut.FadeIn (audioSource, 1.0f));
+						Debug.Log ("audioSources.Add  " + uid);
+						audioSources.Add (uid, audioSource);
+						string err;
+						LoadedAssetBundle loadedBundle = AssetBundleManager.GetLoadedAssetBundle (assetBundelName, out err);
+						if (err == null) {
+							if (loadedBundle.m_AssetBundle != null) {
+								loadedBundle.m_AssetBundle.Unload (false);
+							}
+						}
+					} else {
+						Debug.Log ("Error : failed to load " + assetBundelName + " " + path);
+					}
 				}
 
-
-
 			}
-//			return audioClip;
 		}
 	}
 
@@ -383,32 +398,13 @@ public class Main : MonoBehaviour
 				
 				AssetBundle assetBundle = loadedAssetBundle.m_AssetBundle;
 				if (assetBundle != null) {
+					assetBundleRef.Add (assetBundleName, assetBundle.GetAllAssetNames ());
 					if (assetBundleName.Contains ("_f")) {
 						dialogs.Add (assetBundleName);
 					} else if (assetBundleName.Contains ("_r")) {
 						soundfields.Add (assetBundleName);
 					}
-//					string[] assetNames = assetBundle.GetAllAssetNames ();					
-//					foreach (string name in assetNames) {
-//						if (name.ToString ().Contains ("dialog")) {
-//							Log (LogType.Log, "dialogs : -> " + name);
-//							dialogs.Add (name);
-//						} else {
-//							Log (LogType.Log, "soundfield : -> " + name);
-//							soundfields.Add (name);
-//						}
-//					}
-//					AudioClip[] clips = assetBundle.LoadAllAssets<AudioClip> ();
-//					foreach (AudioClip clip in clips) {
-//						if (clip.ToString ().StartsWith ("F") || clip.ToString ().Contains ("_OL")) {
-////							dialogs.Add (clip);
-//							Log (LogType.Log, "dialogs : -> " + clip.ToString () + " | Class : " + clip.GetType ());
-//						} else {
-////							soundfields.Add (clip);
-//							Log (LogType.Log, "soundfield : -> " + clip.ToString () + " | Class : " + clip.GetType ());
-//						}
-//					}
-						
+	
 
 				}
 			}
@@ -467,10 +463,5 @@ public class Main : MonoBehaviour
 		aboutCanvas.SetActive (!aboutCanvas.activeSelf);
 	}
 
-	class BundleNameAssetName
-	{
-		string bundleName;
-		string assetName;
-	}
 
 }

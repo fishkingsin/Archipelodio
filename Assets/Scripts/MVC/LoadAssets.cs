@@ -62,7 +62,9 @@ public class LoadAssets : MonoBehaviour
 
 	public IEnumerator reload ()
 	{
+		
 		foreach (string assetBundleName in assetBundleNames) {
+			AssetBundleManager.UnloadAssetBundle (assetBundleName);
 			yield return StartCoroutine (InstantiateGameObjectAsync (assetBundleName, "sample", typeof(AudioClip)));
 		}
 	}

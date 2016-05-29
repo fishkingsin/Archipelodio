@@ -104,7 +104,7 @@ public class SubmitLocation : MonoBehaviour
 		if (www.error != null) {
 			Debug.Log ("Error uploading: " + www.error);
 		} else {
-			Debug.Log ("Finished uploading data");  
+//			Debug.Log ("Finished uploading data");  
 		}
 		
 	}
