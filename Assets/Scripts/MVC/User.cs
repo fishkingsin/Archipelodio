@@ -9,10 +9,6 @@ public class User : MonoBehaviour
 
 	public UserDeadDelegate userDeadDelegate;
 
-	public delegate AudioClip GetAudioClipDelegate (AudioSource audioSource);
-
-	public GetAudioClipDelegate getClipDelegate;
-
 	public delegate void AudioCompletedDelegate (AudioSource audioSource, string uid);
 
 	public AudioCompletedDelegate audioSourceCompleted;
@@ -64,7 +60,7 @@ public class User : MonoBehaviour
 		} else {
 			age -= 1;
 			float s = Mathf.Min (age, 500.0f) / 500.0f;
-			float m = Utils.Mapf (s, 0.0f, 1.0f, 0.1f, 1.0f, true);
+			float m = Utils.Mapf (s, 0.0f, 1.0f, 0.0f, 1.0f, true);
 			transform.localScale = mScale * m;
 
 			if (audioSource != null) {

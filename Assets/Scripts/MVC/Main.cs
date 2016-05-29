@@ -79,6 +79,7 @@ public class Main : MonoBehaviour
 					if (audioSource.Equals (dialogAudioSourceRef)) {
 						dialogAudioSourceRef = null;
 					}
+					audioSource.clip = null;
 				
 				}
 
@@ -133,6 +134,7 @@ public class Main : MonoBehaviour
 	void UserFetched (string uid, double longitude, double latitude, double altutide)
 	{
 		try {
+			Debug.Log ("System.GC.Collect ()");
 			System.GC.Collect ();
 			#if UNITY_EDITOR
 			string myuid = "debugger";
@@ -156,7 +158,6 @@ public class Main : MonoBehaviour
 						u.uid = uid;
 						u.centerRef = sphere;
 						u.userDeadDelegate += UserDead;
-						u.getClipDelegate += GetAudioClip;
 						u.audioSourceCompleted += AudioSourceCompleted;
 						AudioSource audioSource = e.GetComponent <AudioSource> ();
 
@@ -201,7 +202,7 @@ public class Main : MonoBehaviour
 			if (dialogAudioSourceRef == null && dialogs.Count > 0) {
 				Debug.Log ("AssignAudioClip : " + audioSource + " to " + uid);
 
-				audioSource.clip = GetAudioClip (audioSource);
+				GetAudioClip (ref audioSource);
 				Debug.Log ("dialogAudioSource Clip : " + audioSource.clip.ToString ());
 				audioSource.Play ();
 				audioSource.volume = 0.0f;
@@ -214,8 +215,8 @@ public class Main : MonoBehaviour
 				try {
 					if (audioSources.Count < numObjects) {
 
-						AudioClip audioClip = GetAudioClip (audioSource);
-						audioSource.clip = audioClip;
+						GetAudioClip (ref audioSource);
+
 						audioSource.Play ();
 						audioSource.volume = 0.0f;
 						StartCoroutine (AudioFadeOut.FadeIn (audioSource, 1.0f));
@@ -233,17 +234,22 @@ public class Main : MonoBehaviour
 		}
 	}
 
-	AudioClip GetAudioClip (AudioSource audioSource)
+	void GetAudioClip (ref AudioSource audioSource)
 	{
+		if (audioSource.clip != null) {
+			
+			audioSource.clip = null;
+		}
 		if (dialogAudioSourceRef == null && !audioSource.Equals (dialogAudioSourceRef)) {
+			
 			dialogAudioSourceRef = audioSource;
 
-			AudioClip audioClip = null;
+//			AudioClip audioClip = null;
 			if (dialogs.Count != 0) {
 				
 				int index = (int)(UnityEngine.Random.value * dialogs.Count);
 				string err;
-				LoadedAssetBundle loadedAssetBundle = AssetBundleManager.GetLoadedAssetBundle ( dialogs [index], out err);
+				LoadedAssetBundle loadedAssetBundle = AssetBundleManager.GetLoadedAssetBundle (dialogs [index], out err);
 				if (err == null) {
 					
 					AssetBundle assetBundle = loadedAssetBundle.m_AssetBundle;
@@ -253,47 +259,45 @@ public class Main : MonoBehaviour
 					Debug.Log ("Got dialogs bundles asset index2" + index2);
 					string path = names [index2];
 					Debug.Log ("Got dialogs path " + path);
-					audioClip = assetBundle.LoadAsset<AudioClip> (path);
+					audioSource.clip = assetBundle.LoadAsset<AudioClip> (path);
+//					assetBundle.Unload (false);
+					Debug.Log ("dialogs assetBundle.Unload (false)");
 
-					Debug.Log ("Got dailog clip " + audioClip.ToString ());
-				}else{
+				} else {
 					Debug.Log ("Error load dailog clip " + dialogs [index]);
 				}
 
 			}
-			return audioClip;
+//			return audioClip;
 		} else {
-			AudioClip audioClip = null;
+//			AudioClip audioClip = null;
 			if (soundfields.Count > 0) {
 
-				if (soundfields.Count != 0) {
-					int index = (int)(UnityEngine.Random.value * soundfields.Count);
-					string err;
-					LoadedAssetBundle loadedAssetBundle = AssetBundleManager.GetLoadedAssetBundle ( soundfields [index], out err);
-					if (err == null) {
+				int index = (int)(UnityEngine.Random.value * soundfields.Count);
+				string err;
+				LoadedAssetBundle loadedAssetBundle = AssetBundleManager.GetLoadedAssetBundle (soundfields [index], out err);
+				if (err == null) {
 
-						AssetBundle assetBundle = loadedAssetBundle.m_AssetBundle;
-						string[] names = assetBundle.GetAllAssetNames ();
-						int index2 = (int)(UnityEngine.Random.value * names.Length);
-						Debug.Log ("Got soundfields bundles index" + index);
-						Debug.Log ("Got soundfields bundles asset index2" + index2);
-						string path = names [index2];
-						Debug.Log ("Got soundfields path " + path);
-						audioClip = assetBundle.LoadAsset<AudioClip> (path);
+					AssetBundle assetBundle = loadedAssetBundle.m_AssetBundle;
+					string[] names = assetBundle.GetAllAssetNames ();
+					int index2 = (int)(UnityEngine.Random.value * names.Length);
+					Debug.Log ("Got soundfields bundles index" + index);
+					Debug.Log ("Got soundfields bundles asset index2" + index2);
+					string path = names [index2];
+					Debug.Log ("Got soundfields path " + path);
+					audioSource.clip = assetBundle.LoadAsset<AudioClip> (path);
+//					assetBundle.Unload (false);
+					Debug.Log ("soundfields assetBundle.Unload (false)");
 
-						Debug.Log ("Got soundfields clip " + audioClip.ToString ());
-
-					} else {
-						Debug.Log ("Error load soundfields clip " + soundfields [index]);
-					}
 
 				} else {
-					Log (LogType.Error, "Failed to get soudnfield clip ");
+					Debug.Log ("Error load soundfields clip " + soundfields [index]);
 				}
 
 
+
 			}
-			return audioClip;
+//			return audioClip;
 		}
 	}
 
@@ -381,7 +385,7 @@ public class Main : MonoBehaviour
 				if (assetBundle != null) {
 					if (assetBundleName.Contains ("_f")) {
 						dialogs.Add (assetBundleName);
-					} else if (assetBundleName.Contains ("_r")){
+					} else if (assetBundleName.Contains ("_r")) {
 						soundfields.Add (assetBundleName);
 					}
 //					string[] assetNames = assetBundle.GetAllAssetNames ();					
