@@ -41,7 +41,7 @@ public class Main : MonoBehaviour
 	AudioSource dialogAudioSourceRef;
 
 	LocationInfo lastData;
-
+	bool blockDialog = false;
 
 	void Start ()
 	{
@@ -202,7 +202,7 @@ public class Main : MonoBehaviour
 		}
 
 		try {
-			if (dialogAudioSourceRef == null && dialogs.Count > 0) {
+			if (dialogAudioSourceRef == null && dialogs.Count > 0 && !blockDialog) {
 				Debug.Log ("AssignAudioClip : " + audioSource + " to " + uid);
 
 				StartCoroutine (GetAudioClip (uid));
@@ -355,6 +355,7 @@ public class Main : MonoBehaviour
 
 	IEnumerator pickNextToPlay ()
 	{
+		blockDialog = true;
 		float watSec = (UnityEngine.Random.value * 60) + 30;
 		Debug.Log ("pickNextToPlay watSec : " + watSec);
 		yield return new WaitForSeconds (watSec);
@@ -380,11 +381,13 @@ public class Main : MonoBehaviour
 				}
 			}
 		}
+		blockDialog = false;
 		if (targetUser != null) {
 			User user = targetUser.GetComponent <User> ();
 			AudioSource _as_ = targetUser.GetComponent <AudioSource> ();
 			AssignAudioClip (ref _as_, user.uid);
 		}
+
 	}
 
 
